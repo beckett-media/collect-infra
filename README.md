@@ -1,3 +1,9 @@
+# Global Infrastructure
+
+Hey there. This repo houses the code that builds the Noxx Global Infrastructure.
+
+The various [services that comprise the Noxx Platform](https://github.com/NoXX-Technologies/docs/blob/main/developers/services/README.md) hook into this infrastructure.
+
 ## Install CDK
 `$ npm install -g aws-cdk`
 
@@ -13,12 +19,6 @@ Do this via console
 ## Bootstrap an environment
 `$ cdk bootstrap aws://602537455821/us-east-1 --profile noxx-staging`%  
 
-# Welcome to your CDK TypeScript project
-
-This is a blank project for CDK development with TypeScript.
-
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
-
 ## Useful commands
 
 * `npm run build`   compile typescript to js
@@ -27,3 +27,7 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 * `cdk deploy`      deploy this stack to your default AWS account/region
 * `cdk diff`        compare deployed stack with current state
 * `cdk synth`       emits the synthesized CloudFormation template
+
+## [Timeline and Goals](https://docs.google.com/spreadsheets/d/11EZpMwBINrwbvLawncP47e5jE4AiuK7G1mOnHFt0rGw/edit#gid=0)
+
+![Diagram](Noxx%20Global%20Infrastructure%202.0.drawio.png)
