@@ -28,6 +28,7 @@ Do this via console
 * `cdk diff`        compare deployed stack with current state
 * `cdk synth`       emits the synthesized CloudFormation template
 
-## [Timeline and Goals](https://docs.google.com/spreadsheets/d/11EZpMwBINrwbvLawncP47e5jE4AiuK7G1mOnHFt0rGw/edit#gid=0)
-
+## Overview
+- [Timeline and Goals](https://docs.google.com/spreadsheets/d/11EZpMwBINrwbvLawncP47e5jE4AiuK7G1mOnHFt0rGw/edit#gid=0)
+- Diagram
 ![Diagram](Noxx%20Global%20Infrastructure%202.0.drawio.png)
