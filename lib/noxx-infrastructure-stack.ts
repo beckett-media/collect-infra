@@ -96,7 +96,7 @@ export class NoxxInfrastructureStack extends cdk.Stack {
 
     new cdk.CfnOutput(this, 'databaseSecretName', {
       value: cluster.secret?.secretName!,
-      description: 'The secret name for the aurora cluster',
+      description: 'The secret name for our aurora cluster',
       exportName: 'auroraClusterSecretName',
     });
 

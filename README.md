@@ -32,3 +32,5 @@ Do this via console
 - [Timeline and Goals](https://docs.google.com/spreadsheets/d/11EZpMwBINrwbvLawncP47e5jE4AiuK7G1mOnHFt0rGw/edit#gid=0)
 - Diagram
 ![Diagram](Noxx%20Global%20Infrastructure%202.0.drawio.png)
+- [Database Schema](https://dbdiagram.io/d/631f938d0911f91ba591ff92)
+![Database Schema](Database%20Schema.png)
