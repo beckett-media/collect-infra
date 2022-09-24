@@ -14,10 +14,14 @@ The various [services that comprise the Noxx Platform](https://github.com/NoXX-T
 Do this via console
 
 ## Get account number
-`$ aws sts get-caller-identity --profile noxx-staging`
+`$ aws sts get-caller-identity --profile <profile>`
 
 ## Bootstrap an environment
-`$ cdk bootstrap aws://602537455821/us-east-1 --profile noxx-staging`%  
+`$ cdk bootstrap aws://<account-number>/us-east-1 --profile <profile>`
+
+## Deploying
+
+`$ STAGE=<dev|staging|production> cdk deploy --profile <profile>`  
 
 ## Useful commands
 
