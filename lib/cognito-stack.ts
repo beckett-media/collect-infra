@@ -15,6 +15,7 @@ export class CognitoStack extends cdk.Stack {
     const { stage, vpc } = props;
 
     const userPool = new cdk.aws_cognito.UserPool(this, "becketuserpool", {
+      removalPolicy: stage === "production" ? cdk.RemovalPolicy.RETAIN : cdk.RemovalPolicy.DESTROY,
       userPoolName: "beckett-userpool",
       selfSignUpEnabled: true,
       mfa: cdk.aws_cognito.Mfa.OPTIONAL,
