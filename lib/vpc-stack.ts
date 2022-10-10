@@ -21,7 +21,7 @@ export class VpcStack extends cdk.Stack {
       production: "10.52.0.0/16"
     }
 
-    const vpc = new ec2.Vpc(this, 'VPC', {
+    const vpc = new ec2.Vpc(this, "VPC", {
       maxAzs: 2,
       cidr: cidrMapping[stage as keyof typeof cidrMapping],
       natGateways: stage === "production" ? 2 : 1,
