@@ -4,6 +4,7 @@ import 'source-map-support/register';
 import { AuroraStack } from '../lib/aurora-stack';
 import { AwsCdkCloudWatchStack } from '../lib/aws-cdk-cloudwatch-stack';
 import { BastionStack } from '../lib/bastion-stack';
+import { CognitoStack } from '../lib/cognito-stack';
 import { ElasticacheStack } from '../lib/elasticache-stack';
 import { IamDeployUserStack } from '../lib/iam-deploy-user-stack';
 import { NoxxInfrastructureStack } from '../lib/noxx-infrastructure-stack';
@@ -28,7 +29,11 @@ const opensearchStack = new OpensearchStack(app, "OpensearchStack", {stage, vpc:
 const s3UploadsStack = new S3UploadsStack(app, "S3UploadsStack", {stage, vpc: vpcStack.vpc, terminationProtection: stage === "production"});
 const cwStack = new AwsCdkCloudWatchStack(app, 'AwsCdkAuroraAlarmsStack', {
   dbCluster: auroraStack.dbCluster,
-  email: process.env.EMAIL ?? 'cswan@beckett.com'
+  email: process.env.EMAIL ?? 'cswann@beckett.com'
+});
+const cognitoStack = new CognitoStack(app, 'AwsCdkAuroraAlarmsStack', {
+  stage, 
+  vpc: vpcStack.vpc
 });
 
 new NoxxInfrastructureStack(app, 'NoxxInfrastructureStack', {
