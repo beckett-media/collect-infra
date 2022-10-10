@@ -1,0 +1,40 @@
+{
+  "extends": [
+    "plugin:prettier/recommended"
+  ],
+  "plugins": ["unused-imports"],
+  "rules": {
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "error",
+    "no-extra-boolean-cast": "off",
+    "import/order": "off",
+    "unused-imports/no-unused-imports": "error",
+    "radix": 0,
+    "@typescript-eslint/no-unused-vars": [
+      "warn", // or "error"
+      { 
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_"
+      }
+    ],
+    "unused-imports/no-unused-vars": [
+      "warn",
+      {
+        "vars": "all",
+        "varsIgnorePattern": "^_",
+        "args": "after-used",
+        "argsIgnorePattern": "^_"
+      }
+    ],
+    "no-unused-vars": [
+      "warn",
+      {
+        "vars": "all",
+        "varsIgnorePattern": "^_",
+        "args": "after-used",
+        "argsIgnorePattern": "^_"
+      }
+    ]
+  }
+}
