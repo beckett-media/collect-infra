@@ -11,7 +11,9 @@ The various [services that comprise the Noxx Platform](https://github.com/NoXX-T
 `$ npm install -g typescript`
 
 ## Create a new AWS Sub Account
-Do this via console
+Note: the profile you use must have `organizations:CreateAccount` permissions in the parent account
+
+`$ aws organizations create-account --email <env-name>@get-noxx.com --acount-name "infrastructure-<env-name>" --profile <profile>`
 
 ## Get account number
 `$ aws sts get-caller-identity --profile <profile>`
@@ -22,15 +24,6 @@ Do this via console
 ## Deploying
 
 `$ STAGE=<dev|staging|production> cdk deploy --profile <profile> --all`  
-
-## Useful commands
-
-* `npm run build`   compile typescript to js
-* `npm run watch`   watch for changes and compile
-* `npm run test`    perform the jest unit tests
-* `cdk deploy`      deploy this stack to your default AWS account/region
-* `cdk diff`        compare deployed stack with current state
-* `cdk synth`       emits the synthesized CloudFormation template
 
 ## Overview
 - [Timeline and Goals](https://docs.google.com/spreadsheets/d/11EZpMwBINrwbvLawncP47e5jE4AiuK7G1mOnHFt0rGw/edit#gid=0)
