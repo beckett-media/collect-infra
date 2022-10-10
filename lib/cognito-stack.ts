@@ -31,23 +31,28 @@ export class CognitoStack extends cdk.Stack {
       //   sesVerifiedDomain: "beckett.com",
       // }),
       passwordPolicy: {
-        minLength: 12,
+        minLength: 7,
         requireLowercase: true,
         requireUppercase: true,
         requireDigits: true,
         requireSymbols: true,
         tempPasswordValidity: Duration.days(3),
       },
-      userVerification: {
-        emailSubject: "Verify your email!",
-        emailBody: "Thanks for signing up! Your verification code is {####}",
-        emailStyle: cdk.aws_cognito.VerificationEmailStyle.CODE,
-        smsMessage: "Thanks for signing up! Your verification code is {####}",
-      },
+      // userVerification: {
+      //   emailSubject: "Verify your email!",
+      //   emailBody: "Thanks for signing up! Your verification code is {####}",
+      //   emailStyle: cdk.aws_cognito.VerificationEmailStyle.CODE,
+      //   smsMessage: "Thanks for signing up! Your verification code is {####}",
+      // },
       signInAliases: {
+        username: true,
         preferredUsername: true,
         email: true,
         phone: true
+      },
+      autoVerify: { 
+        email: true, 
+        phone: true 
       },
       signInCaseSensitive: false,
       standardAttributes: {

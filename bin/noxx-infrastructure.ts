@@ -31,7 +31,7 @@ const cwStack = new AwsCdkCloudWatchStack(app, 'AwsCdkAuroraAlarmsStack', {
   dbCluster: auroraStack.dbCluster,
   email: process.env.EMAIL ?? 'cswann@beckett.com'
 });
-const cognitoStack = new CognitoStack(app, 'AwsCdkAuroraAlarmsStack', {
+const cognitoStack = new CognitoStack(app, 'AwsCognitoStack', {
   stage, 
   vpc: vpcStack.vpc
 });

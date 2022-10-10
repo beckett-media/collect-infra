@@ -21,7 +21,7 @@ Do this via console
 
 ## Deploying
 
-`$ STAGE=<dev|staging|production> cdk deploy --profile <profile>`  
+`$ STAGE=<dev|staging|production> cdk deploy --profile <profile> --all`  
 
 ## Useful commands
 
