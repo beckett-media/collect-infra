@@ -23,7 +23,7 @@ export class CognitoStack extends cdk.Stack {
         sms: true,
         otp: true,
       },
-      // follow the steps in the Cognito Developer Guide to verify an email address, move the account out of the SES sandbox, and grant Cognito email permissions via an authorization policy
+      // for production, follow the steps in the Cognito Developer Guide (https://docs.aws.amazon.com/cognito/latest/developerguide/user-pool-email.html#user-pool-email-developer) to verify an email address, move the account out of the SES sandbox, and grant Cognito email permissions via an authorization policy
       // email: cdk.aws_cognito.UserPoolEmail.withSES({
       //   sesRegion: "us-east-1",
       //   fromEmail: "noreply@beckett.com",
