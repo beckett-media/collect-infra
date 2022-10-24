@@ -8,14 +8,16 @@ interface CognitoStackProps extends cdk.StackProps {
 }
 
 export class CognitoStack extends cdk.Stack {
-  
   constructor(scope: Construct, id: string, props: CognitoStackProps) {
     super(scope, id, props);
 
     const { stage, vpc } = props;
 
     const userPool = new cdk.aws_cognito.UserPool(this, "becketuserpool", {
-      removalPolicy: stage === "production" ? cdk.RemovalPolicy.RETAIN : cdk.RemovalPolicy.DESTROY,
+      removalPolicy:
+        stage === "production"
+          ? cdk.RemovalPolicy.RETAIN
+          : cdk.RemovalPolicy.DESTROY,
       userPoolName: "beckett-userpool",
       selfSignUpEnabled: true,
       mfa: cdk.aws_cognito.Mfa.OPTIONAL,
@@ -49,11 +51,11 @@ export class CognitoStack extends cdk.Stack {
         username: true,
         preferredUsername: true,
         email: true,
-        phone: true
+        phone: true,
       },
-      autoVerify: { 
-        email: true, 
-        phone: true 
+      autoVerify: {
+        email: true,
+        phone: true,
       },
       signInCaseSensitive: false,
       standardAttributes: {
@@ -76,8 +78,27 @@ export class CognitoStack extends cdk.Stack {
       },
     });
 
-    new cdk.CfnOutput(this, "UserPoolId", { value: userPool.userPoolId, exportName: "UserPoolId" });
-    new cdk.CfnOutput(this, "UserPoolArn", { value: userPool.userPoolArn, exportName: "UserPoolArn" });
+    const client = userPool.addClient("global-app-client", {
+      accessTokenValidity: Duration.minutes(60),
+      idTokenValidity: Duration.minutes(60),
+      refreshTokenValidity: Duration.days(30),
+      authFlows: {
+        adminUserPassword: true,
+        userPassword: true,
+      },
+    });
 
+    new cdk.CfnOutput(this, "CognitoClientId", {
+      value: client.userPoolClientId,
+      exportName: "CognitoClientId",
+    });
+    new cdk.CfnOutput(this, "UserPoolId", {
+      value: userPool.userPoolId,
+      exportName: "UserPoolId",
+    });
+    new cdk.CfnOutput(this, "UserPoolArn", {
+      value: userPool.userPoolArn,
+      exportName: "UserPoolArn",
+    });
   }
 }

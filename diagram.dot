@@ -1,0 +1,528 @@
+digraph "Diagram" {
+  splines = "ortho";
+  pad = "1.0";
+  nodesep = "0.60";
+  ranksep = "0.75";
+  fontname = "Sans-Serif";
+  fontsize = "15";
+  dpi = "200";
+  rankdir = "BT";
+  compound = "true";
+  fontcolor = "#222222";
+  edge [
+    color = "#D5871488",
+    penwidth = 2,
+    arrowhead = "dot",
+    arrowtail = "dot",
+  ];
+  node [
+    shape = "box",
+    style = "rounded",
+    fixedsize = true,
+    width = 1.7,
+    height = 1.7,
+    labelloc = "c",
+    imagescale = true,
+    fontname = "Sans-Serif",
+    fontsize = 8,
+    margin = 8,
+  ];
+  subgraph "App" {
+    subgraph "cluster-SubGraph.App" {
+      graph [
+        label = "App",
+        labelloc = "b",
+        labeljust = "l",
+        margin = "10",
+        fontsize = "16",
+        penwidth = "2",
+        pencolor = "#888888",
+        style = "filled,rounded",
+        fillcolor = "#f3f3f3",
+      ];
+      "VpnStack" [
+        label = " VpnStack",
+        fontsize = 12,
+      ];
+      "NoxxInfrastructureStack" [
+        label = "\nNoxxInfrastructureSta",
+        fontsize = 12,
+      ];
+      subgraph "cluster-SubGraph.VpcStack" {
+        graph [
+          label = "VpcStack",
+          labelloc = "b",
+          labeljust = "l",
+          margin = "10",
+          fontsize = "16",
+          penwidth = "2",
+          pencolor = "#888888",
+          style = "filled,rounded",
+          fillcolor = "#e4e4e4",
+        ];
+        "VpcStack/VPC" [
+          label = " VPC",
+          fontsize = 12,
+          image = "/Users/cody/workspace/beckett/infrastructure/node_modules/cdk-dia/icons/aws/Service/Arch_Networking-Content/64/Arch_Amazon-Virtual-Private-Cloud_64@5x.png",
+          imagescale = "true",
+          imagepos = "tc",
+          penwidth = "0",
+          shape = "node",
+          fixedsize = "true",
+          labelloc = "b",
+          width = 2,
+          height = 2.266,
+        ];
+      }
+      subgraph "cluster-SubGraph.AuroraClusterStack" {
+        graph [
+          label = "AuroraClusterStack",
+          labelloc = "b",
+          labeljust = "l",
+          margin = "10",
+          fontsize = "16",
+          penwidth = "2",
+          pencolor = "#888888",
+          style = "filled,rounded",
+          fillcolor = "#e4e4e4",
+        ];
+        "AuroraClusterStack/SlowQueryParamsGrp" [
+          label = " SlowQueryParamsGrp",
+          fontsize = 12,
+          image = "/Users/cody/workspace/beckett/infrastructure/node_modules/cdk-dia/icons/aws/Service/Arch_Database/64/Arch_Amazon-RDS_64@5x.png",
+          imagescale = "true",
+          imagepos = "tc",
+          penwidth = "0",
+          shape = "node",
+          fixedsize = "true",
+          labelloc = "b",
+          width = 1.2,
+          height = 1.466,
+        ];
+        "AuroraClusterStack/AuroraClusterSG" [
+          label = " AuroraClusterSG",
+          fontsize = 12,
+          image = "/Users/cody/workspace/beckett/infrastructure/node_modules/cdk-dia/icons/aws/security_group.png",
+          imagescale = "true",
+          imagepos = "tc",
+          penwidth = "0",
+          shape = "node",
+          fixedsize = "true",
+          labelloc = "b",
+          width = 2,
+          height = 2.266,
+        ];
+        "AuroraClusterStack/Database" [
+          label = " Database",
+          fontsize = 12,
+          image = "/Users/cody/workspace/beckett/infrastructure/node_modules/cdk-dia/icons/aws/Service/Arch_Database/64/Arch_Amazon-RDS_64@5x.png",
+          imagescale = "true",
+          imagepos = "tc",
+          penwidth = "0",
+          shape = "node",
+          fixedsize = "true",
+          labelloc = "b",
+          width = 2,
+          height = 2.266,
+        ];
+        "AuroraClusterStack/DBProxyRole" [
+          label = " DBProxyRole",
+          fontsize = 12,
+          image = "/Users/cody/workspace/beckett/infrastructure/node_modules/cdk-dia/icons/aws/Service/Arch_Security-Identity-Compliance/64/Arch_AWS-Identity-and-Access-Management_64@5x.png",
+          imagescale = "true",
+          imagepos = "tc",
+          penwidth = "0",
+          shape = "node",
+          fixedsize = "true",
+          labelloc = "b",
+          width = 1.2,
+          height = 1.466,
+        ];
+        "AuroraClusterStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/ServiceRole" [
+          label = " ServiceRole",
+          fontsize = 12,
+          image = "/Users/cody/workspace/beckett/infrastructure/node_modules/cdk-dia/icons/aws/Service/Arch_Security-Identity-Compliance/64/Arch_AWS-Identity-and-Access-Management_64@5x.png",
+          imagescale = "true",
+          imagepos = "tc",
+          penwidth = "0",
+          shape = "node",
+          fixedsize = "true",
+          labelloc = "b",
+          width = 1.2,
+          height = 1.466,
+        ];
+      }
+      subgraph "cluster-SubGraph.BastionStack" {
+        graph [
+          label = "BastionStack",
+          labelloc = "b",
+          labeljust = "l",
+          margin = "10",
+          fontsize = "16",
+          penwidth = "2",
+          pencolor = "#888888",
+          style = "filled,rounded",
+          fillcolor = "#e4e4e4",
+        ];
+        "BastionStack/BastionSecurityGroup" [
+          label = " BastionSecurityGroup",
+          fontsize = 12,
+          image = "/Users/cody/workspace/beckett/infrastructure/node_modules/cdk-dia/icons/aws/security_group.png",
+          imagescale = "true",
+          imagepos = "tc",
+          penwidth = "0",
+          shape = "node",
+          fixedsize = "true",
+          labelloc = "b",
+          width = 2,
+          height = 2.266,
+        ];
+        "BastionStack/BastionHostLinux" [
+          label = " BastionHostLinux",
+          fontsize = 12,
+        ];
+      }
+      subgraph "cluster-SubGraph.ElasticacheStack" {
+        graph [
+          label = "ElasticacheStack",
+          labelloc = "b",
+          labeljust = "l",
+          margin = "10",
+          fontsize = "16",
+          penwidth = "2",
+          pencolor = "#888888",
+          style = "filled,rounded",
+          fillcolor = "#e4e4e4",
+        ];
+        "ElasticacheStack/RedisSubnetGroup" [
+          label = " ELASTICACHE\nSUBNETGROUP\nRedisSubnetGroup",
+          fontsize = 12,
+        ];
+        "ElasticacheStack/RedisSecurityGroup" [
+          label = " RedisSecurityGroup",
+          fontsize = 12,
+          image = "/Users/cody/workspace/beckett/infrastructure/node_modules/cdk-dia/icons/aws/security_group.png",
+          imagescale = "true",
+          imagepos = "tc",
+          penwidth = "0",
+          shape = "node",
+          fixedsize = "true",
+          labelloc = "b",
+          width = 2,
+          height = 2.266,
+        ];
+        "ElasticacheStack/RedisCache" [
+          label = " ELASTICACHE\nCACHECLUSTER\nRedisCache",
+          fontsize = 12,
+        ];
+      }
+      subgraph "cluster-SubGraph.IamDeployUserStack" {
+        graph [
+          label = "IamDeployUserStack",
+          labelloc = "b",
+          labeljust = "l",
+          margin = "10",
+          fontsize = "16",
+          penwidth = "2",
+          pencolor = "#888888",
+          style = "filled,rounded",
+          fillcolor = "#e4e4e4",
+        ];
+        "IamDeployUserStack/deployBotIamUser" [
+          label = " deployBotIamUser",
+          fontsize = 12,
+          image = "/Users/cody/workspace/beckett/infrastructure/node_modules/cdk-dia/icons/aws/Service/Arch_Security-Identity-Compliance/64/Arch_AWS-Identity-and-Access-Management_64@5x.png",
+          imagescale = "true",
+          imagepos = "tc",
+          penwidth = "0",
+          shape = "node",
+          fixedsize = "true",
+          labelloc = "b",
+          width = 1.2,
+          height = 1.466,
+        ];
+        "IamDeployUserStack/CfnAccessKey" [
+          label = " IAM AccessKey\nCfnAccessKey",
+          fontsize = 12,
+          image = "/Users/cody/workspace/beckett/infrastructure/node_modules/cdk-dia/icons/aws/Service/Arch_Security-Identity-Compliance/64/Arch_AWS-Identity-and-Access-Management_64@5x.png",
+          imagescale = "true",
+          imagepos = "tc",
+          penwidth = "0",
+          shape = "node",
+          fixedsize = "true",
+          labelloc = "b",
+          width = 1.2,
+          height = 1.682,
+        ];
+      }
+      subgraph "cluster-SubGraph.OpensearchStack" {
+        graph [
+          label = "OpensearchStack",
+          labelloc = "b",
+          labeljust = "l",
+          margin = "10",
+          fontsize = "16",
+          penwidth = "2",
+          pencolor = "#888888",
+          style = "filled,rounded",
+          fillcolor = "#e4e4e4",
+        ];
+        "OpensearchStack/OpensearchSecurityGroup" [
+          label = "\nOpensearchSecurityGro",
+          fontsize = 12,
+          image = "/Users/cody/workspace/beckett/infrastructure/node_modules/cdk-dia/icons/aws/security_group.png",
+          imagescale = "true",
+          imagepos = "tc",
+          penwidth = "0",
+          shape = "node",
+          fixedsize = "true",
+          labelloc = "b",
+          width = 2,
+          height = 2.4819999999999998,
+        ];
+        "OpensearchStack/Domain" [
+          label = " Domain",
+          fontsize = 12,
+        ];
+        "OpensearchStack/AWS679f53fac002430cb0da5b7982bd2287" [
+          label = "\nAWS679f53fac002430cb0",
+          fontsize = 12,
+          image = "/Users/cody/workspace/beckett/infrastructure/node_modules/cdk-dia/icons/aws/Service/Arch_Compute/64/Arch_AWS-Lambda_64@5x.png",
+          imagescale = "true",
+          imagepos = "tc",
+          penwidth = "0",
+          shape = "node",
+          fixedsize = "true",
+          labelloc = "b",
+          width = 2,
+          height = 2.4819999999999998,
+        ];
+        "OpensearchStack/Service Linked Role" [
+          label = " IAM\nServiceLinkedRole\nService Linked Role",
+          fontsize = 12,
+          image = "/Users/cody/workspace/beckett/infrastructure/node_modules/cdk-dia/icons/aws/Service/Arch_Security-Identity-Compliance/64/Arch_AWS-Identity-and-Access-Management_64@5x.png",
+          imagescale = "true",
+          imagepos = "tc",
+          penwidth = "0",
+          shape = "node",
+          fixedsize = "true",
+          labelloc = "b",
+          width = 1.2,
+          height = 1.898,
+        ];
+      }
+      subgraph "cluster-SubGraph.S3UploadsStack" {
+        graph [
+          label = "S3UploadsStack",
+          labelloc = "b",
+          labeljust = "l",
+          margin = "10",
+          fontsize = "16",
+          penwidth = "2",
+          pencolor = "#888888",
+          style = "filled,rounded",
+          fillcolor = "#e4e4e4",
+        ];
+        "S3UploadsStack/userUploadBucket" [
+          label = " userUploadBucket",
+          fontsize = 12,
+          image = "/Users/cody/workspace/beckett/infrastructure/node_modules/cdk-dia/icons/aws/Service/Arch_Storage/64/Arch_Amazon-S3-Standard_64@5x.png",
+          imagescale = "true",
+          imagepos = "tc",
+          penwidth = "0",
+          shape = "node",
+          fixedsize = "true",
+          labelloc = "b",
+          width = 2,
+          height = 2.266,
+        ];
+        "S3UploadsStack/cloudfrontDistro" [
+          label = " cloudfrontDistro",
+          fontsize = 12,
+          image = "/Users/cody/workspace/beckett/infrastructure/node_modules/cdk-dia/icons/aws/Service/Arch_Networking-Content/64/Arch_Amazon-CloudFront_64@5x.png",
+          imagescale = "true",
+          imagepos = "tc",
+          penwidth = "0",
+          shape = "node",
+          fixedsize = "true",
+          labelloc = "b",
+          width = 2,
+          height = 2.266,
+        ];
+      }
+      subgraph "cluster-SubGraph.AwsCdkAuroraAlarmsStack" {
+        graph [
+          label = "AwsCdkAuroraAlarmsStack",
+          labelloc = "b",
+          labeljust = "l",
+          margin = "10",
+          fontsize = "16",
+          penwidth = "2",
+          pencolor = "#888888",
+          style = "filled,rounded",
+          fillcolor = "#e4e4e4",
+        ];
+        "AwsCdkAuroraAlarmsStack/SlowQueryAlarm" [
+          label = " SlowQueryAlarm",
+          fontsize = 12,
+          image = "/Users/cody/workspace/beckett/infrastructure/node_modules/cdk-dia/icons/aws/Service/Arch_Management-Governance/64/Arch_Amazon-CloudWatch_64@5x.png",
+          imagescale = "true",
+          imagepos = "tc",
+          penwidth = "0",
+          shape = "node",
+          fixedsize = "true",
+          labelloc = "b",
+          width = 1.2,
+          height = 1.466,
+        ];
+        "AwsCdkAuroraAlarmsStack/SlowQueryTopic" [
+          label = " SlowQueryTopic",
+          fontsize = 12,
+          image = "/Users/cody/workspace/beckett/infrastructure/node_modules/cdk-dia/icons/aws/Service/Arch_App-Integration/Arch_64/Arch_AWS-Simple-Notification-Service_64@5x.png",
+          imagescale = "true",
+          imagepos = "tc",
+          penwidth = "0",
+          shape = "node",
+          fixedsize = "true",
+          labelloc = "b",
+          width = 2,
+          height = 2.266,
+        ];
+        "AwsCdkAuroraAlarmsStack/DbLogGroup/SlowQueryMetricFilter" [
+          label = "\nSlowQueryMetricFilter",
+          fontsize = 12,
+          image = "/Users/cody/workspace/beckett/infrastructure/node_modules/cdk-dia/icons/aws/cloudwatch_metric_filter.png",
+          imagescale = "true",
+          imagepos = "tc",
+          penwidth = "0",
+          shape = "node",
+          fixedsize = "true",
+          labelloc = "b",
+          width = 2,
+          height = 2.4819999999999998,
+        ];
+      }
+      subgraph "cluster-SubGraph.AwsCognitoStack" {
+        graph [
+          label = "AwsCognitoStack",
+          labelloc = "b",
+          labeljust = "l",
+          margin = "10",
+          fontsize = "16",
+          penwidth = "2",
+          pencolor = "#888888",
+          style = "filled,rounded",
+          fillcolor = "#e4e4e4",
+        ];
+        "AwsCognitoStack/becketuserpool" [
+          label = " becketuserpool",
+          fontsize = 12,
+          image = "/Users/cody/workspace/beckett/infrastructure/node_modules/cdk-dia/icons/aws/Service/Arch_Security-Identity-Compliance/64/Arch_Amazon-Cognito_64.png",
+          imagescale = "true",
+          imagepos = "tc",
+          penwidth = "0",
+          shape = "node",
+          fixedsize = "true",
+          labelloc = "b",
+          width = 1.2,
+          height = 1.466,
+        ];
+      }
+      subgraph "cluster-SubGraph.AwsBackupStack" {
+        graph [
+          label = "AwsBackupStack",
+          labelloc = "b",
+          labeljust = "l",
+          margin = "10",
+          fontsize = "16",
+          penwidth = "2",
+          pencolor = "#888888",
+          style = "filled,rounded",
+          fillcolor = "#e4e4e4",
+        ];
+        "AwsBackupStack/Plan" [
+          label = " Plan",
+          fontsize = 12,
+          image = "/Users/cody/workspace/beckett/infrastructure/node_modules/cdk-dia/icons/aws/Service/Arch_Storage/64/Arch_AWS-Backup_64@5x.png",
+          imagescale = "true",
+          imagepos = "tc",
+          penwidth = "0",
+          shape = "node",
+          fixedsize = "true",
+          labelloc = "b",
+          width = 2,
+          height = 2.266,
+        ];
+      }
+    }
+  }
+  "AuroraClusterStack/AuroraClusterSG" -> "VpcStack/VPC" [
+    dir = "both",
+  ];
+  "AuroraClusterStack/AuroraClusterSG" -> "AuroraClusterStack/Database" [
+    dir = "both",
+  ];
+  "AuroraClusterStack/Database" -> "VpcStack/VPC" [
+    dir = "both",
+  ];
+  "AuroraClusterStack/Database" -> "AuroraClusterStack/SlowQueryParamsGrp" [
+    dir = "both",
+  ];
+  "AuroraClusterStack/Database" -> "AuroraClusterStack/AuroraClusterSG" [
+    dir = "both",
+  ];
+  "AuroraClusterStack/DBProxyRole" -> "AuroraClusterStack/Database" [
+    dir = "both",
+  ];
+  "BastionStack/BastionSecurityGroup" -> "VpcStack/VPC" [
+    dir = "both",
+  ];
+  "BastionStack/BastionHostLinux" -> "VpcStack/VPC" [
+    dir = "both",
+  ];
+  "BastionStack/BastionHostLinux" -> "BastionStack/BastionSecurityGroup" [
+    dir = "both",
+  ];
+  "ElasticacheStack/RedisSubnetGroup" -> "VpcStack/VPC" [
+    dir = "both",
+  ];
+  "ElasticacheStack/RedisSecurityGroup" -> "VpcStack/VPC" [
+    dir = "both",
+  ];
+  "ElasticacheStack/RedisCache" -> "ElasticacheStack/RedisSubnetGroup" [
+    dir = "both",
+  ];
+  "ElasticacheStack/RedisCache" -> "ElasticacheStack/RedisSecurityGroup" [
+    dir = "both",
+  ];
+  "IamDeployUserStack/CfnAccessKey" -> "IamDeployUserStack/deployBotIamUser" [
+    dir = "both",
+  ];
+  "OpensearchStack/OpensearchSecurityGroup" -> "VpcStack/VPC" [
+    dir = "both",
+  ];
+  "OpensearchStack/OpensearchSecurityGroup" -> "BastionStack/BastionSecurityGroup" [
+    dir = "both",
+  ];
+  "OpensearchStack/Domain" -> "VpcStack/VPC" [
+    dir = "both",
+  ];
+  "OpensearchStack/Domain" -> "OpensearchStack/OpensearchSecurityGroup" [
+    dir = "both",
+  ];
+  "OpensearchStack/Domain" -> "OpensearchStack/AWS679f53fac002430cb0da5b7982bd2287" [
+    dir = "both",
+  ];
+  "S3UploadsStack/userUploadBucket" -> "S3UploadsStack/cloudfrontDistro" [
+    dir = "both",
+  ];
+  "S3UploadsStack/cloudfrontDistro" -> "S3UploadsStack/userUploadBucket" [
+    dir = "both",
+  ];
+  "AwsCdkAuroraAlarmsStack/SlowQueryAlarm" -> "AwsCdkAuroraAlarmsStack/SlowQueryTopic" [
+    dir = "both",
+  ];
+  "AwsCdkAuroraAlarmsStack/DbLogGroup/SlowQueryMetricFilter" -> "AuroraClusterStack/Database" [
+    dir = "both",
+  ];
+}
