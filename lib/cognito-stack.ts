@@ -1,5 +1,6 @@
 import * as cdk from "aws-cdk-lib";
 import { Duration } from "aws-cdk-lib";
+import { StringAttribute } from "aws-cdk-lib/aws-cognito";
 import { Construct } from "constructs";
 
 interface CognitoStackProps extends cdk.StackProps {
@@ -58,6 +59,13 @@ export class CognitoStack extends cdk.Stack {
         phone: true,
       },
       signInCaseSensitive: false,
+      customAttributes: {
+        billingAddress: new StringAttribute({
+          minLen: 5,
+          maxLen: 50,
+          mutable: true,
+        }),
+      },
       standardAttributes: {
         givenName: {
           required: false,
@@ -72,6 +80,10 @@ export class CognitoStack extends cdk.Stack {
           mutable: true,
         },
         preferredUsername: {
+          required: false,
+          mutable: true,
+        },
+        address: {
           required: false,
           mutable: true,
         },
