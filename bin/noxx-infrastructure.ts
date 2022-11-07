@@ -6,7 +6,9 @@ import { AwsCdkCloudWatchStack } from "../lib/aws-cdk-cloudwatch-stack";
 import { BackupStack } from "../lib/backup-stack";
 import { BastionStack } from "../lib/bastion-stack";
 import { CognitoStack } from "../lib/cognito-stack";
+import { CollectFrontendStack } from "../lib/collect-frontend-stack";
 import { ElasticacheStack } from "../lib/elasticache-stack";
+import { IamBackendDevsStack } from "../lib/iam-backend-devs-stack";
 import { IamDeployUserStack } from "../lib/iam-deploy-user-stack";
 import { NoxxInfrastructureStack } from "../lib/noxx-infrastructure-stack";
 import { OpensearchStack } from "../lib/opensearch-stack";
@@ -71,6 +73,22 @@ const cognitoStack = new CognitoStack(app, "AwsCognitoStack", {
 const backupStack = new BackupStack(app, "AwsBackupStack", {
   stage,
   vpc: vpcStack.vpc,
+});
+const collectFrontEnd = new CollectFrontendStack(app, "CollectFrontendStack", {
+  stage,
+  vpc: vpcStack.vpc,
+  env: {
+    account: process.env.CDK_DEFAULT_ACCOUNT,
+    region: process.env.CDK_DEFAULT_REGION,
+  },
+});
+const iamBackendDev = new IamBackendDevsStack(app, "IamBackendDevsStack", {
+  stage,
+  vpc: vpcStack.vpc,
+  env: {
+    account: process.env.CDK_DEFAULT_ACCOUNT,
+    region: process.env.CDK_DEFAULT_REGION,
+  },
 });
 
 const vpnStack = !environmentConfig(stage).vpnServerCertificateArn

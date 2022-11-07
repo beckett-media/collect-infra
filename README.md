@@ -30,6 +30,10 @@ Note: the profile you use must have `organizations:CreateAccount` permissions in
 
 `$ STAGE=<dev|staging|production> cdk deploy --profile <profile> --all`
 
+## Collect Frontend
+
+If you are creating a new environment (or want to change the domain for an existing environment), you'll first have to purchase the domain from AWS and wait for it to be registered. Then add that domain name to `[environment-config.ts](util/environment-config.ts)`
+
 ## VPN
 
 Very few people should need VPN access to the infrastructure resources. In fact, right now, the only use-case is to be able to establish connections to the Aurora cluster from the developers local machine for verifying data imports.

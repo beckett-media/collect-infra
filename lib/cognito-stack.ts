@@ -61,8 +61,9 @@ export class CognitoStack extends cdk.Stack {
       signInCaseSensitive: false,
       customAttributes: {
         billingAddress: new StringAttribute({
-          minLen: 5,
-          maxLen: 50,
+          mutable: true,
+        }),
+        shippingAddress: new StringAttribute({
           mutable: true,
         }),
       },
@@ -83,10 +84,10 @@ export class CognitoStack extends cdk.Stack {
           required: false,
           mutable: true,
         },
-        address: {
-          required: false,
-          mutable: true,
-        },
+        // address: {
+        //   required: false,
+        //   mutable: true,
+        // },
       },
     });
 
