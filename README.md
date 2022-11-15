@@ -44,7 +44,7 @@ In order for the VPN Endpoint to be created, the environment-config.ts needs an 
 
 ### Using
 
-[See the sections "Downloading and installing AWS Client VPN" and "Exporting and configuring the VPN client configuration file"](https://aws.amazon.com/blogs/database/accessing-an-amazon-rds-instance-remotely-using-aws-client-vpn/)
+[See the sections "Downloading and installing AWS Client VPN" and "Exporting and configuring the VPN client configuration file"](https://aws.amazon.com/blogs/database/accessing-an-amazon-rds-instance-remotely-using-aws-client-vpn/) starting from step 7: "Downloading and installing AWS Client VPN"
 
 You'll need a .crt and .key file
 
