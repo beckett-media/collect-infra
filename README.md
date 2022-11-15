@@ -46,6 +46,15 @@ In order for the VPN Endpoint to be created, the environment-config.ts needs an 
 
 [See the sections "Downloading and installing AWS Client VPN" and "Exporting and configuring the VPN client configuration file"](https://aws.amazon.com/blogs/database/accessing-an-amazon-rds-instance-remotely-using-aws-client-vpn/) starting from step 7: "Downloading and installing AWS Client VPN"
 
+When prompted to export the config, you'll need to get the vpn id from the platform team and include the correct profile for the environment you're working with (dev, staging, production). Note - if you haven't set up that profile using the steps earlier, this will not work.
+
+````
+aws ec2 export-client-vpn-client-configuration \
+--client-vpn-endpoint-id "cvpn-endpoint-xxxxxxxx" \
+--output text > myclientconfig.ovpn \
+--profile noxx-<ENV>
+````
+
 You'll need a .crt and .key file
 
 ## Overview
