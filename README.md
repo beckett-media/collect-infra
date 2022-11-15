@@ -40,7 +40,7 @@ Very few people should need VPN access to the infrastructure resources. In fact,
 
 ### Creating
 
-In order for the VPN Endpoint to be created, the environment-config.ts needs an ACM ARN. To get this information, [follow these steps](https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/client-authentication.html#mutual).
+In order for the VPN Endpoint to be created, the environment-config.ts needs an ACM ARN. To get this information, [follow these steps](https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/client-authentication.html#mutual) under the "Mutual" section only.
 
 ### Using
 
