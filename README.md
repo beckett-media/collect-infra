@@ -12,9 +12,9 @@ The various [services that comprise the Noxx Platform](https://github.com/NoXX-T
 
 `$ npm install -g typescript`
 
-## Deploying
+## Access 
 
-Before deploying, you'll need an AWS IAM user account in the root AWS account. And that user will need to be in the IAM group `platform-engineers`.
+You'll need an AWS IAM user account in the root AWS account. And that user will need to be in the IAM group `platform-engineers`.
 
 Once that is done, you'll need to add a profile block to your `~/.aws/credentials` and `~/.aws/config` files that look like this
 
@@ -42,6 +42,9 @@ In both cases, SOURCE PROFILE should reference the AWS IAM user in the root AWS 
 aws_access_key_id=xxxxx
 aws_secret_access_key=xxxxxxx
 ````
+
+
+## Deploying
 
 `$ STAGE=<dev|staging|production> cdk deploy --profile <profile> --all`
 
@@ -71,6 +74,8 @@ If you are creating a new environment (or want to change the domain for an exist
 ## VPN
 
 Very few people should need VPN access to the infrastructure resources. In fact, right now, the only use-case is to be able to establish connections to the Aurora cluster from the developers local machine for verifying data imports.
+
+Also, note, you do not need to setup this entire project to utilize the VPN that it creates. You'll just need to follow the Access section
 
 ### Creating
 
