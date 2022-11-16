@@ -12,23 +12,55 @@ The various [services that comprise the Noxx Platform](https://github.com/NoXX-T
 
 `$ npm install -g typescript`
 
-## Create a new AWS Sub Account
+## Deploying
+
+Before deploying, you'll need an AWS IAM user account in the root AWS account. And that user will need to be in the IAM group `platform-engineers`.
+
+Once that is done, you'll need to add a profile block to your `~/.aws/credentials` and `~/.aws/config` files that look like this
+
+### ~/.aws/credentials
+
+````
+[<PROFILE NAME>]
+role_arn=arn:aws:iam::xxxxxxx:role/OrganizationAccountAccessRole
+source_profile=<SOURCE PROFILE>
+region=us-east-1
+````
+
+### ~/.aws/config
+````  
+[profile <PROFILE NAME>]
+role_arn=arn:aws:iam::xxxxxxx:role/OrganizationAccountAccessRole
+source_profile=<SOURCE PROFILE>
+region=us-east-1
+````
+
+In both cases, SOURCE PROFILE should reference the AWS IAM user in the root AWS account, like this:
+
+````
+[<SOURCE PROFILE>]
+aws_access_key_id=xxxxx
+aws_secret_access_key=xxxxxxx
+````
+
+`$ STAGE=<dev|staging|production> cdk deploy --profile <profile> --all`
+
+## Creating a new environment
+
+### Create a new AWS Sub Account
 
 Note: the profile you use must have `organizations:CreateAccount` permissions in the parent account
 
 `$ aws organizations create-account --email <env-name>@get-noxx.com --acount-name "infrastructure-<env-name>" --profile <profile>`
 
-## Get account number
+### Get account number
 
 `$ aws sts get-caller-identity --profile <profile>`
 
-## Bootstrap an environment
+### Bootstrap an environment
 
 `$ cdk bootstrap aws://<account-number>/us-east-1 --profile <profile>`
 
-## Deploying
-
-`$ STAGE=<dev|staging|production> cdk deploy --profile <profile> --all`
 
 ## Collect Frontend
 
