@@ -86,7 +86,7 @@ Run the following command (ask the platform team for the ENDPOINT ID. The "ENV" 
 $ aws ec2 export-client-vpn-client-configuration \
 --client-vpn-endpoint-id "cvpn-endpoint-<ENDPOINT ID>" \
 --output text > myclientconfig.ovpn --profile noxx-<ENV>
-```
+````
 
 Because our AWS Client VPN endpoint uses mutual authentication, you must add the client certificate and the client private key to the configuration file that you download. To do this, open the configuration file using a text editor and add the following lines to the end of the file, providing the path to the client certificate and key that was created earlier.
 
