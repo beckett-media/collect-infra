@@ -12,23 +12,57 @@ The various [services that comprise the Noxx Platform](https://github.com/NoXX-T
 
 `$ npm install -g typescript`
 
-## Create a new AWS Sub Account
+## Deploying
+
+Before deploying, you'll need an AWS IAM user account in the root AWS account. And that user will need to be in the IAM group `platform-engineers`.
+
+Once that is done, you'll need to add a profile block to your `~/.aws/credentials` and `~/.aws/config` files that look like this
+
+### ~/.aws/credentials
+
+````
+[<PROFILE NAME>]
+role_arn=arn:aws:iam::xxxxxxx:role/OrganizationAccountAccessRole
+source_profile=<SOURCE PROFILE>
+region=us-east-1
+````
+
+### ~/.aws/config
+````  
+[profile <PROFILE NAME>]
+role_arn=arn:aws:iam::xxxxxxx:role/OrganizationAccountAccessRole
+source_profile=<SOURCE PROFILE>
+region=us-east-1
+````
+
+In both cases, SOURCE PROFILE should reference the AWS IAM user in the root AWS account, like this:
+
+````
+[<SOURCE PROFILE>]
+aws_access_key_id=xxxxx
+aws_secret_access_key=xxxxxxx
+````
+
+`$ STAGE=<dev|staging|production> cdk deploy --profile <profile> --all`
+
+## Creating a new environment
+
+Note - creating a new environment is not a necessary part of setup. If you are accessing and existing environment **DO NOT DO THIS**
+
+### Create a new AWS Sub Account
 
 Note: the profile you use must have `organizations:CreateAccount` permissions in the parent account
 
 `$ aws organizations create-account --email <env-name>@get-noxx.com --acount-name "infrastructure-<env-name>" --profile <profile>`
 
-## Get account number
+### Get account number
 
 `$ aws sts get-caller-identity --profile <profile>`
 
-## Bootstrap an environment
+### Bootstrap an environment
 
 `$ cdk bootstrap aws://<account-number>/us-east-1 --profile <profile>`
 
-## Deploying
-
-`$ STAGE=<dev|staging|production> cdk deploy --profile <profile> --all`
 
 ## Collect Frontend
 
@@ -40,13 +74,29 @@ Very few people should need VPN access to the infrastructure resources. In fact,
 
 ### Creating
 
-In order for the VPN Endpoint to be created, the environment-config.ts needs an ACM ARN. To get this information, [follow these steps](https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/client-authentication.html#mutual).
+In order for the VPN Endpoint to be created, the environment-config.ts needs an ACM ARN. To get this information, [follow these steps](https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/client-authentication.html#mutual) under the "Mutual" section only and then move on to the next step here.
 
 ### Using
 
-[See the sections "Downloading and installing AWS Client VPN" and "Exporting and configuring the VPN client configuration file"](https://aws.amazon.com/blogs/database/accessing-an-amazon-rds-instance-remotely-using-aws-client-vpn/)
+[Download](https://aws.amazon.com/vpn/client-vpn-download/) and install the latest software for AWS Client VPN.
 
-You'll need a .crt and .key file
+Run the following command (ask the platform team for the ENDPOINT ID. The "ENV" variable is the envrionemt you're trying to connect to (i.e. dev, staging, production). Note - if you haven't set up that profile using the steps earlier, this will not work.
+
+````
+$ aws ec2 export-client-vpn-client-configuration \
+--client-vpn-endpoint-id "cvpn-endpoint-<ENDPOINT ID>" \
+--output text > myclientconfig.ovpn --profile noxx-<ENV>
+````
+
+Because our AWS Client VPN endpoint uses mutual authentication, you must add the client certificate and the client private key to the configuration file that you download. To do this, open the configuration file using a text editor and add the following lines to the end of the file, providing the path to the client certificate and key that was created earlier.
+
+
+cert /<PATH>/client1.domain.tld.crt
+key /<PATH>/client1.domain.tld.key
+
+You'll need to request the `.crt` and `.key` from someone on the platform team. PATH is where you choose to store them.
+
+
 
 ## Overview
 
