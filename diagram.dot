@@ -454,6 +454,123 @@ digraph "Diagram" {
           height = 2.266,
         ];
       }
+      subgraph "cluster-SubGraph.CollectFrontendStack" {
+        graph [
+          label = "CollectFrontendStack",
+          labelloc = "b",
+          labeljust = "l",
+          margin = "10",
+          fontsize = "16",
+          penwidth = "2",
+          pencolor = "#888888",
+          style = "filled,rounded",
+          fillcolor = "#e4e4e4",
+        ];
+        "CollectFrontendStack/SiteBucket" [
+          label = " SiteBucket",
+          fontsize = 12,
+          image = "/Users/cody/workspace/beckett/infrastructure/node_modules/cdk-dia/icons/aws/Service/Arch_Storage/64/Arch_Amazon-S3-Standard_64@5x.png",
+          imagescale = "true",
+          imagepos = "tc",
+          penwidth = "0",
+          shape = "node",
+          fixedsize = "true",
+          labelloc = "b",
+          width = 2,
+          height = 2.266,
+        ];
+        "CollectFrontendStack/SiteRecord" [
+          label = " SiteRecord",
+          fontsize = 12,
+          image = "/Users/cody/workspace/beckett/infrastructure/node_modules/cdk-dia/icons/aws/Resource/Res_Networking-and-Content-Delivery/Res_48_Dark/Res_Amazon-Route-53-Hosted-Zone_48_Dark_gen.png",
+          imagescale = "true",
+          imagepos = "tc",
+          penwidth = "0",
+          shape = "node",
+          fixedsize = "true",
+          labelloc = "b",
+          width = 1.2,
+          height = 1.466,
+        ];
+        "CollectFrontendStack/SiteDistribution/CFDistribution" [
+          label = " CloudFront\nDistribution\nCFDistribution",
+          fontsize = 12,
+          image = "/Users/cody/workspace/beckett/infrastructure/node_modules/cdk-dia/icons/aws/Service/Arch_Networking-Content/64/Arch_Amazon-CloudFront_64@5x.png",
+          imagescale = "true",
+          imagepos = "tc",
+          penwidth = "0",
+          shape = "node",
+          fixedsize = "true",
+          labelloc = "b",
+          width = 2,
+          height = 2.6979999999999995,
+        ];
+        subgraph "cluster-SubGraph.SiteCertificate" {
+          graph [
+            label = "SiteCertificate",
+            labelloc = "b",
+            labeljust = "l",
+            margin = "10",
+            fontsize = "16",
+            penwidth = "2",
+            pencolor = "#888888",
+            style = "filled,rounded",
+            fillcolor = "#d6d6d6",
+          ];
+          "CollectFrontendStack/SiteCertificate/CertificateRequestorFunction" [
+            label = "\nCertificateRequestorF",
+            fontsize = 12,
+            image = "/Users/cody/workspace/beckett/infrastructure/node_modules/cdk-dia/icons/aws/Service/Arch_Compute/64/Arch_AWS-Lambda_64@5x.png",
+            imagescale = "true",
+            imagepos = "tc",
+            penwidth = "0",
+            shape = "node",
+            fixedsize = "true",
+            labelloc = "b",
+            width = 2,
+            height = 2.4819999999999998,
+          ];
+          "CollectFrontendStack/SiteCertificate/CertificateRequestorResource" [
+            label = " CloudFormation\nCustomResource",
+            fontsize = 12,
+            image = "/Users/cody/workspace/beckett/infrastructure/node_modules/cdk-dia/icons/aws/Service/Arch_Management-Governance/64/Arch_AWS-CloudFormation_64@5x.png",
+            imagescale = "true",
+            imagepos = "tc",
+            penwidth = "0",
+            shape = "node",
+            fixedsize = "true",
+            labelloc = "b",
+            width = 1.2,
+            height = 1.682,
+          ];
+        }
+      }
+      subgraph "cluster-SubGraph.IamBackendDevsStack" {
+        graph [
+          label = "IamBackendDevsStack",
+          labelloc = "b",
+          labeljust = "l",
+          margin = "10",
+          fontsize = "16",
+          penwidth = "2",
+          pencolor = "#888888",
+          style = "filled,rounded",
+          fillcolor = "#e4e4e4",
+        ];
+        "IamBackendDevsStack/backenddevs" [
+          label = " backenddevs",
+          fontsize = 12,
+          image = "/Users/cody/workspace/beckett/infrastructure/node_modules/cdk-dia/icons/aws/Service/Arch_Security-Identity-Compliance/64/Arch_AWS-Identity-and-Access-Management_64@5x.png",
+          imagescale = "true",
+          imagepos = "tc",
+          penwidth = "0",
+          shape = "node",
+          fixedsize = "true",
+          labelloc = "b",
+          width = 1.2,
+          height = 1.466,
+        ];
+      }
     }
   }
   "AuroraClusterStack/AuroraClusterSG" -> "VpcStack/VPC" [
@@ -523,6 +640,15 @@ digraph "Diagram" {
     dir = "both",
   ];
   "AwsCdkAuroraAlarmsStack/DbLogGroup/SlowQueryMetricFilter" -> "AuroraClusterStack/Database" [
+    dir = "both",
+  ];
+  "CollectFrontendStack/SiteRecord" -> "CollectFrontendStack/SiteDistribution/CFDistribution" [
+    dir = "both",
+  ];
+  "CollectFrontendStack/SiteDistribution/CFDistribution" -> "CollectFrontendStack/SiteCertificate/CertificateRequestorResource" [
+    dir = "both",
+  ];
+  "CollectFrontendStack/SiteDistribution/CFDistribution" -> "CollectFrontendStack/SiteBucket" [
     dir = "both",
   ];
 }
