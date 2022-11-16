@@ -90,9 +90,10 @@ $ aws ec2 export-client-vpn-client-configuration \
 
 Because our AWS Client VPN endpoint uses mutual authentication, you must add the client certificate and the client private key to the configuration file that you download. To do this, open the configuration file using a text editor and add the following lines to the end of the file, providing the path to the client certificate and key that was created earlier.
 
-
+````
 cert /<PATH>/client1.domain.tld.crt
 key /<PATH>/client1.domain.tld.key
+````
 
 You'll need to request the `.crt` and `.key` from someone on the platform team. PATH is where you choose to store them.
 
