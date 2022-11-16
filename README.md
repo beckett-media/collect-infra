@@ -44,18 +44,25 @@ In order for the VPN Endpoint to be created, the environment-config.ts needs an 
 
 ### Using
 
-[See the sections "Downloading and installing AWS Client VPN" and "Exporting and configuring the VPN client configuration file"](https://aws.amazon.com/blogs/database/accessing-an-amazon-rds-instance-remotely-using-aws-client-vpn/) starting from step 7: "Downloading and installing AWS Client VPN"
+[Download](https://aws.amazon.com/vpn/client-vpn-download/) and install the latest software for AWS Client VPN.
 
-When prompted to export the config, you'll need to get the vpn id from the platform team and include the correct profile for the environment you're working with (dev, staging, production). Note - if you haven't set up that profile using the steps earlier, this will not work.
+Run the following command (ask the platform team for the ENDPOINT ID. The "ENV" variable is the envrionemt you're trying to connect to (i.e. dev, staging, production). Note - if you haven't set up that profile using the steps earlier, this will not work.
 
 ````
-aws ec2 export-client-vpn-client-configuration \
---client-vpn-endpoint-id "cvpn-endpoint-xxxxxxxx" \
---output text > myclientconfig.ovpn \
---profile noxx-<ENV>
-````
+$ aws ec2 export-client-vpn-client-configuration \
+--client-vpn-endpoint-id "cvpn-endpoint-<ENDPOINT ID>" \
+--output text > myclientconfig.ovpn --profile noxx-<ENV>
+```
 
-You'll need a .crt and .key file
+Because our AWS Client VPN endpoint uses mutual authentication, you must add the client certificate and the client private key to the configuration file that you download. To do this, open the configuration file using a text editor and add the following lines to the end of the file, providing the path to the client certificate and key that was created earlier.
+
+
+cert /<PATH>/client1.domain.tld.crt
+key /<PATH>/client1.domain.tld.key
+
+You'll need to request the `.crt` and `.key` from someone on the platform team. PATH is where you choose to store them.
+
+
 
 ## Overview
 
