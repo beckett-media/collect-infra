@@ -47,6 +47,8 @@ aws_secret_access_key=xxxxxxx
 
 ## Creating a new environment
 
+Note - creating a new environment is not a necessary part of setup. If you are accessing and existing environment **DO NOT DO THIS**
+
 ### Create a new AWS Sub Account
 
 Note: the profile you use must have `organizations:CreateAccount` permissions in the parent account
