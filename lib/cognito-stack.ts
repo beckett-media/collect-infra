@@ -1,7 +1,14 @@
 import * as cdk from "aws-cdk-lib";
+import * as acm from "aws-cdk-lib/aws-certificatemanager";
+import * as route53 from "aws-cdk-lib/aws-route53";
+
+import * as apigwv2 from "@aws-cdk/aws-apigatewayv2-alpha";
+import * as targets from "aws-cdk-lib/aws-route53-targets";
+
 import { Duration } from "aws-cdk-lib";
 import { StringAttribute } from "aws-cdk-lib/aws-cognito";
 import { Construct } from "constructs";
+import environmentConfig from "../util/environment-config";
 
 interface CognitoStackProps extends cdk.StackProps {
   stage: "dev" | "staging" | "production";
@@ -13,6 +20,43 @@ export class CognitoStack extends cdk.Stack {
     super(scope, id, props);
 
     const { stage, vpc } = props;
+    const envConfig = environmentConfig(stage);
+    const DOMAIN_NAME = envConfig.domainName;
+    const SSO_DOMAIN = `sso.${DOMAIN_NAME}`;
+
+    //TODO: This will need to change when building within Becket AWS
+    const zone = route53.HostedZone.fromLookup(this, "Zone", {
+      domainName: DOMAIN_NAME,
+    });
+
+    //TODO: This will need to change when building within Becket AWS
+    const siteCertificate = new acm.DnsValidatedCertificate(
+      this,
+      "SsoCertificate",
+      {
+        domainName: SSO_DOMAIN,
+        hostedZone: zone,
+        region: "us-east-1", //standard for acm certs
+      }
+    );
+
+    const dn = new apigwv2.DomainName(this, "SsoDomainName", {
+      domainName: SSO_DOMAIN,
+      certificate: siteCertificate,
+    });
+
+    const api = apigwv2.HttpApi.fromHttpApiAttributes(this, "sso", {
+      httpApiId: envConfig.ssoApiHttpApiId,
+    });
+
+    const apiStage = apigwv2.HttpStage.fromHttpStageAttributes(
+      this,
+      "sso-stage",
+      {
+        api,
+        stageName: "$default",
+      }
+    );
 
     const userPool = new cdk.aws_cognito.UserPool(this, "becketuserpool", {
       removalPolicy:
@@ -26,7 +70,7 @@ export class CognitoStack extends cdk.Stack {
         sms: true,
         otp: true,
       },
-      // for production, follow the steps in the Cognito Developer Guide (https://docs.aws.amazon.com/cognito/latest/developerguide/user-pool-email.html#user-pool-email-developer) to verify an email address, move the account out of the SES sandbox, and grant Cognito email permissions via an authorization policy
+      // TODO: for production, follow the steps in the Cognito Developer Guide (https://docs.aws.amazon.com/cognito/latest/developerguide/user-pool-email.html#user-pool-email-developer) to verify an email address, move the account out of the SES sandbox, and grant Cognito email permissions via an authorization policy
       // email: cdk.aws_cognito.UserPoolEmail.withSES({
       //   sesRegion: "us-east-1",
       //   fromEmail: "noreply@beckett.com",
@@ -99,6 +143,25 @@ export class CognitoStack extends cdk.Stack {
         adminUserPassword: true,
         userPassword: true,
       },
+    });
+
+    new apigwv2.ApiMapping(this, "ApiMapping", {
+      api,
+      domainName: dn,
+      stage: apiStage,
+    });
+
+    //TODO: This will need to change when building within Becket AWS
+
+    new route53.ARecord(this, "SsoSiteRecord", {
+      recordName: SSO_DOMAIN,
+      target: route53.RecordTarget.fromAlias(
+        new targets.ApiGatewayv2DomainProperties(
+          dn.regionalDomainName,
+          dn.regionalHostedZoneId
+        )
+      ),
+      zone,
     });
 
     new cdk.CfnOutput(this, "CognitoClientId", {

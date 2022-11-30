@@ -10,6 +10,8 @@ interface VpnStackProps extends cdk.StackProps {
   vpc: cdk.aws_ec2.Vpc;
 }
 
+//TODO: This will have to be modified to use Single sign-on (SAML 2.0-based federated authentication) https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/client-authentication.html
+
 export class VpnStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: VpnStackProps) {
     super(scope, id, props);

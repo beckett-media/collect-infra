@@ -4,6 +4,8 @@ export interface IEnvironmentConfig {
   readonly vpnClientCertificateArn?: string;
   readonly domainName: string;
   readonly rootAccountId: string;
+  readonly collectApiHttpApiId: string;
+  readonly ssoApiHttpApiId: string;
 }
 
 const environmentConfig = (environmentName: string): IEnvironmentConfig => {
@@ -14,6 +16,8 @@ const environmentConfig = (environmentName: string): IEnvironmentConfig => {
       vpnClientCertificateArn?: string;
       domainName: string;
       rootAccountId: string;
+      collectApiHttpApiId: string;
+      ssoApiHttpApiId: string;
     };
   } = {
     dev: {
@@ -24,6 +28,8 @@ const environmentConfig = (environmentName: string): IEnvironmentConfig => {
         "arn:aws:acm:us-east-1:223560911013:certificate/fe939073-ac74-409b-acb6-7d24b6f8d496",
       domainName: "beckettcollectdev.com",
       rootAccountId: "750497448356",
+      collectApiHttpApiId: "e2hleqcy71",
+      ssoApiHttpApiId: "dautelb593",
     },
     staging: {
       backup: false,
@@ -31,6 +37,8 @@ const environmentConfig = (environmentName: string): IEnvironmentConfig => {
       vpnClientCertificateArn: "",
       domainName: "beckettcollectstaging.com",
       rootAccountId: "750497448356",
+      collectApiHttpApiId: "",
+      ssoApiHttpApiId: "",
     },
     production: {
       backup: false,
@@ -38,6 +46,8 @@ const environmentConfig = (environmentName: string): IEnvironmentConfig => {
       vpnClientCertificateArn: "",
       domainName: "beckettcollectproduction.com",
       rootAccountId: "750497448356",
+      collectApiHttpApiId: "",
+      ssoApiHttpApiId: "",
     },
   };
   return environmentMapper[environmentName];

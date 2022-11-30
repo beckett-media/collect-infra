@@ -10,6 +10,11 @@
     "@jridgewell/gen-mapping" "^0.1.0"
     "@jridgewell/trace-mapping" "^0.3.9"
 
+"@aws-cdk/aws-apigatewayv2-alpha@^2.51.1-alpha.0":
+  version "2.51.1-alpha.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/aws-apigatewayv2-alpha/-/aws-apigatewayv2-alpha-2.51.1-alpha.0.tgz#ad4311683794ec79fc10cfe8691467bfd212e1b9"
+  integrity sha512-cgAUGSBa8qLnEdRCjAQMtkVlqK7ML+gep9bTlaxQcb3gExvlPNpFUZNxOGoEb1Bpjyhtn2peN37+GU1bEJ6fbQ==
+
 "@aws-cdk/cloud-assembly-schema@1.178.0":
   version "1.178.0"
   resolved "https://registry.yarnpkg.com/@aws-cdk/cloud-assembly-schema/-/cloud-assembly-schema-1.178.0.tgz#1c024f3f4fd7bd298a81f3a4cdee158ec1f84b4c"

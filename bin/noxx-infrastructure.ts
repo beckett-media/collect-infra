@@ -6,12 +6,14 @@ import { AwsCdkCloudWatchStack } from "../lib/aws-cdk-cloudwatch-stack";
 import { BackupStack } from "../lib/backup-stack";
 import { BastionStack } from "../lib/bastion-stack";
 import { CognitoStack } from "../lib/cognito-stack";
+import { CollectApiStack } from "../lib/collect-api-stack";
 import { CollectFrontendStack } from "../lib/collect-frontend-stack";
 import { ElasticacheStack } from "../lib/elasticache-stack";
 import { IamBackendDevsStack } from "../lib/iam-backend-devs-stack";
 import { IamDeployUserStack } from "../lib/iam-deploy-user-stack";
 import { NoxxInfrastructureStack } from "../lib/noxx-infrastructure-stack";
 import { OpensearchStack } from "../lib/opensearch-stack";
+import { S3StaticAssetsStack } from "../lib/s3-static-assets-stack";
 import { S3UploadsStack } from "../lib/s3-uploads-stack";
 import { VpcStack } from "../lib/vpc-stack";
 import { VpnStack } from "../lib/vpn-stack";
@@ -62,6 +64,15 @@ const s3UploadsStack = new S3UploadsStack(app, "S3UploadsStack", {
   vpc: vpcStack.vpc,
   terminationProtection: stage === "production",
 });
+const s3StaticAssetsStack = new S3StaticAssetsStack(
+  app,
+  "S3StaticAssetsStack",
+  {
+    stage,
+    vpc: vpcStack.vpc,
+    terminationProtection: stage === "production",
+  }
+);
 const cwStack = new AwsCdkCloudWatchStack(app, "AwsCdkAuroraAlarmsStack", {
   dbCluster: auroraStack.dbCluster,
   email: process.env.EMAIL ?? "cswann@beckett.com",
@@ -69,6 +80,10 @@ const cwStack = new AwsCdkCloudWatchStack(app, "AwsCdkAuroraAlarmsStack", {
 const cognitoStack = new CognitoStack(app, "AwsCognitoStack", {
   stage,
   vpc: vpcStack.vpc,
+  env: {
+    account: process.env.CDK_DEFAULT_ACCOUNT,
+    region: process.env.CDK_DEFAULT_REGION,
+  },
 });
 const backupStack = new BackupStack(app, "AwsBackupStack", {
   stage,
@@ -82,6 +97,15 @@ const collectFrontEnd = new CollectFrontendStack(app, "CollectFrontendStack", {
     region: process.env.CDK_DEFAULT_REGION,
   },
 });
+const collectApiStack = new CollectApiStack(app, "CollectApiStack", {
+  stage,
+  vpc: vpcStack.vpc,
+  env: {
+    account: process.env.CDK_DEFAULT_ACCOUNT,
+    region: process.env.CDK_DEFAULT_REGION,
+  },
+});
+
 const iamBackendDev = new IamBackendDevsStack(app, "IamBackendDevsStack", {
   stage,
   vpc: vpcStack.vpc,

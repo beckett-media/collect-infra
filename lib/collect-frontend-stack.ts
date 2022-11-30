@@ -36,7 +36,7 @@ export class CollectFrontendStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
-    //Create Certificate
+    //TODO: This will need to change when building within Becket AWS
     const siteCertificate = new acm.DnsValidatedCertificate(
       this,
       "SiteCertificate",
@@ -46,10 +46,6 @@ export class CollectFrontendStack extends cdk.Stack {
         region: "us-east-1", //standard for acm certs
       }
     );
-
-    // const viewerCertificate = cloudfront.ViewerCertificate.fromIamCertificate(
-    //   siteCertificate.certificateArn
-    // );
 
     const viewerCertificate = cloudfront.ViewerCertificate.fromAcmCertificate(
       siteCertificate,
@@ -65,13 +61,15 @@ export class CollectFrontendStack extends cdk.Stack {
       this,
       "SiteDistribution",
       {
-        // aliasConfiguration: {
-        //   acmCertRef: siteCertificateArn,
-        //   names: [WEB_APP_DOMAIN],
-        //   securityPolicy: cloudfront.SecurityPolicyProtocol.TLS_V1_2_2019,
-        // },
-        // viewerCertificate: viewerCertificate,
         viewerCertificate,
+        errorConfigurations: [
+          {
+            errorCode: 404,
+            responseCode: 200,
+            errorCachingMinTtl: 0,
+            responsePagePath: "/index.html",
+          },
+        ],
         originConfigs: [
           {
             customOriginSource: {
@@ -88,7 +86,7 @@ export class CollectFrontendStack extends cdk.Stack {
       }
     );
 
-    //Create A Record Custom Domain to CloudFront CDN
+    //TODO: This will need to change when building within Becket AWS
     new route53.ARecord(this, "SiteRecord", {
       recordName: WEB_APP_DOMAIN,
       target: route53.RecordTarget.fromAlias(

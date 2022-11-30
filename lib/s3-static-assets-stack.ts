@@ -8,21 +8,21 @@ import environmentConfig, {
   IEnvironmentConfig,
 } from "../util/environment-config";
 
-interface S3UploadsStackProps extends cdk.StackProps {
+interface S3StaticAssetsStackProps extends cdk.StackProps {
   stage: "dev" | "staging" | "production";
   vpc: cdk.aws_ec2.Vpc;
 }
 
 //TODO: Consider adding a Beckett CNAME for CloudFront
 
-export class S3UploadsStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props: S3UploadsStackProps) {
+export class S3StaticAssetsStack extends cdk.Stack {
+  constructor(scope: Construct, id: string, props: S3StaticAssetsStackProps) {
     super(scope, id, props);
 
     const { stage, vpc } = props;
     const envConfig: IEnvironmentConfig = environmentConfig(stage);
 
-    const userUploadBucket = new s3.Bucket(this, "userUploadBucket", {
+    const staticAssetsBucket = new s3.Bucket(this, "staticAssetsBucket", {
       removalPolicy:
         stage === "production"
           ? cdk.RemovalPolicy.RETAIN
@@ -30,22 +30,22 @@ export class S3UploadsStack extends cdk.Stack {
     });
     const cloudfrontDistro = new cloudfront.Distribution(
       this,
-      "cloudfrontDistro",
+      "staticAssetsCF",
       {
-        defaultBehavior: { origin: new origins.S3Origin(userUploadBucket) },
+        defaultBehavior: { origin: new origins.S3Origin(staticAssetsBucket) },
       }
     );
 
-    Tags.of(userUploadBucket).add("backup", envConfig.backup! ? "yes" : "no");
+    Tags.of(staticAssetsBucket).add("backup", envConfig.backup! ? "yes" : "no");
 
-    new cdk.CfnOutput(this, `S3UserUploadBucket`, {
-      value: userUploadBucket.bucketName,
-      exportName: "s3UserUploadBucket",
+    new cdk.CfnOutput(this, `S3StaticAssetsBucket`, {
+      value: staticAssetsBucket.bucketName,
+      exportName: "staticAssetsBucket",
     });
 
-    new cdk.CfnOutput(this, `CloudFrontUserUploadDomainName`, {
+    new cdk.CfnOutput(this, `CloudFrontStaticAssetsDomainName`, {
       value: cloudfrontDistro.domainName,
-      exportName: "cloudFrontUserUploadDomainName",
+      exportName: "cloudFrontStaticAssetsDomainName",
     });
   }
 }
