@@ -6,6 +6,7 @@ export interface IEnvironmentConfig {
   readonly rootAccountId: string;
   readonly collectApiHttpApiId: string;
   readonly ssoApiHttpApiId: string;
+  readonly isBeckett: boolean;
 }
 
 const environmentConfig = (environmentName: string): IEnvironmentConfig => {
@@ -18,6 +19,7 @@ const environmentConfig = (environmentName: string): IEnvironmentConfig => {
       rootAccountId: string;
       collectApiHttpApiId: string;
       ssoApiHttpApiId: string;
+      isBeckett: boolean;
     };
   } = {
     dev: {
@@ -30,6 +32,7 @@ const environmentConfig = (environmentName: string): IEnvironmentConfig => {
       rootAccountId: "750497448356",
       collectApiHttpApiId: "e2hleqcy71",
       ssoApiHttpApiId: "dautelb593",
+      isBeckett: false,
     },
     staging: {
       backup: false,
@@ -39,6 +42,7 @@ const environmentConfig = (environmentName: string): IEnvironmentConfig => {
       rootAccountId: "750497448356",
       collectApiHttpApiId: "",
       ssoApiHttpApiId: "",
+      isBeckett: true,
     },
     production: {
       backup: false,
@@ -48,6 +52,7 @@ const environmentConfig = (environmentName: string): IEnvironmentConfig => {
       rootAccountId: "750497448356",
       collectApiHttpApiId: "",
       ssoApiHttpApiId: "",
+      isBeckett: true,
     },
   };
   return environmentMapper[environmentName];
