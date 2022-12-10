@@ -73,9 +73,10 @@ const s3StaticAssetsStack = new S3StaticAssetsStack(
     terminationProtection: stage === "production",
   }
 );
+
 const cwStack = new AwsCdkCloudWatchStack(app, "AwsCdkAuroraAlarmsStack", {
   dbCluster: auroraStack.dbCluster,
-  email: process.env.EMAIL ?? "cswann@beckett.com",
+  email: process.env.EMAIL ?? "cswann@beckett.com", //TODO: This should be an engineering alias to alert them of problems such as slow queries
 });
 const cognitoStack = new CognitoStack(app, "AwsCognitoStack", {
   stage,

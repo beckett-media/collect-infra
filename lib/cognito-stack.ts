@@ -1,6 +1,7 @@
 import * as cdk from "aws-cdk-lib";
 import * as acm from "aws-cdk-lib/aws-certificatemanager";
 import * as route53 from "aws-cdk-lib/aws-route53";
+import * as ses from "aws-cdk-lib/aws-ses";
 
 import * as apigwv2 from "@aws-cdk/aws-apigatewayv2-alpha";
 import * as targets from "aws-cdk-lib/aws-route53-targets";
@@ -23,6 +24,7 @@ export class CognitoStack extends cdk.Stack {
     const envConfig = environmentConfig(stage);
     const DOMAIN_NAME = envConfig.domainName;
     const SSO_DOMAIN = `sso.${DOMAIN_NAME}`;
+    const MAIL_DOMAIN = `mail.${DOMAIN_NAME}`;
 
     //TODO: This will need to change when building within Becket AWS
     const zone = route53.HostedZone.fromLookup(this, "Zone", {
@@ -58,6 +60,11 @@ export class CognitoStack extends cdk.Stack {
       }
     );
 
+    const identity = new ses.EmailIdentity(this, "Identity", {
+      identity: ses.Identity.publicHostedZone(zone),
+      mailFromDomain: MAIL_DOMAIN,
+    });
+
     const userPool = new cdk.aws_cognito.UserPool(this, "becketuserpool", {
       removalPolicy:
         stage === "production"
@@ -70,14 +77,13 @@ export class CognitoStack extends cdk.Stack {
         sms: true,
         otp: true,
       },
-      // TODO: for production, follow the steps in the Cognito Developer Guide (https://docs.aws.amazon.com/cognito/latest/developerguide/user-pool-email.html#user-pool-email-developer) to verify an email address, move the account out of the SES sandbox, and grant Cognito email permissions via an authorization policy
-      // email: cdk.aws_cognito.UserPoolEmail.withSES({
-      //   sesRegion: "us-east-1",
-      //   fromEmail: "noreply@beckett.com",
-      //   fromName: "Beckett",
-      //   replyTo: "support@beckett.com",
-      //   sesVerifiedDomain: "beckett.com",
-      // }),
+      email: cdk.aws_cognito.UserPoolEmail.withSES({
+        sesRegion: "us-east-1",
+        fromEmail: `no-reply@${MAIL_DOMAIN}`,
+        fromName: "Beckett",
+        replyTo: `support@${MAIL_DOMAIN}`,
+        sesVerifiedDomain: MAIL_DOMAIN,
+      }),
       passwordPolicy: {
         minLength: 7,
         requireLowercase: true,
@@ -164,6 +170,10 @@ export class CognitoStack extends cdk.Stack {
       zone,
     });
 
+    new cdk.CfnOutput(this, "SsoDomain", {
+      value: SSO_DOMAIN,
+      exportName: "SsoDomain",
+    });
     new cdk.CfnOutput(this, "CognitoClientId", {
       value: client.userPoolClientId,
       exportName: "CognitoClientId",
