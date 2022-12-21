@@ -14,8 +14,6 @@ interface S3StaticAssetsStackProps extends cdk.StackProps {
   vpc: cdk.aws_ec2.Vpc;
 }
 
-//TODO: Consider adding a Beckett CNAME for CloudFront
-
 export class S3StaticAssetsStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: S3StaticAssetsStackProps) {
     super(scope, id, props);
