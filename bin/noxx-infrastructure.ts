@@ -71,6 +71,10 @@ const s3StaticAssetsStack = new S3StaticAssetsStack(
     stage,
     vpc: vpcStack.vpc,
     terminationProtection: stage === "production",
+    env: {
+      account: process.env.CDK_DEFAULT_ACCOUNT,
+      region: process.env.CDK_DEFAULT_REGION,
+    },
   }
 );
 
