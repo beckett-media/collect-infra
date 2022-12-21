@@ -1,9 +1,9 @@
-import * as cdk from 'aws-cdk-lib';
-import * as ec2 from 'aws-cdk-lib/aws-ec2';
-import { SecurityGroup } from 'aws-cdk-lib/aws-ec2';
-import * as iam from 'aws-cdk-lib/aws-iam';
-import { Domain, EngineVersion } from 'aws-cdk-lib/aws-opensearchservice';
-import { Construct } from 'constructs';
+import * as cdk from "aws-cdk-lib";
+import * as ec2 from "aws-cdk-lib/aws-ec2";
+import { SecurityGroup } from "aws-cdk-lib/aws-ec2";
+import * as iam from "aws-cdk-lib/aws-iam";
+import { Domain, EngineVersion } from "aws-cdk-lib/aws-opensearchservice";
+import { Construct } from "constructs";
 
 interface OpensearchStackProps extends cdk.StackProps {
   stage: "dev" | "staging" | "production";
@@ -19,19 +19,23 @@ export class OpensearchStack extends cdk.Stack {
 
     const { stage, vpc, bastionSecurityGroup } = props;
 
-    const opensearchSecurityGroup = new ec2.SecurityGroup(this, 'OpensearchSecurityGroup', {
-      vpc,
-      allowAllOutbound: true,
-      description: 'Security group for opensearch domain',
-      securityGroupName: 'OpensearchSecurityGroup'
-    });
+    const opensearchSecurityGroup = new ec2.SecurityGroup(
+      this,
+      "OpensearchSecurityGroup",
+      {
+        vpc,
+        allowAllOutbound: true,
+        description: "Security group for opensearch domain",
+        securityGroupName: "OpensearchSecurityGroup",
+      }
+    );
 
-    const opensearchDomain = new Domain(this, 'Domain', {
+    const opensearchDomain = new Domain(this, "Domain", {
       version: EngineVersion.OPENSEARCH_1_3,
       securityGroups: [opensearchSecurityGroup],
       vpcSubnets: [
         {
-          subnets: [vpc.privateSubnets[0]]
+          subnets: [vpc.privateSubnets[0]],
         },
         // {
         //   subnetType: ec2.SubnetType.PRIVATE_WITH_NAT,
@@ -43,7 +47,7 @@ export class OpensearchStack extends cdk.Stack {
         //   masterNodeInstanceType: "m5.large.search"
         // }: {}),
         dataNodes: process.env.STAGE === "production" ? 4 : 1,
-        dataNodeInstanceType: "t3.small.search", //TODO: process.env.STAGE === "production" ? "m5.large.search" : "t3.small.search",
+        dataNodeInstanceType: "m5.large.search", //TODO: process.env.STAGE === "production" ? "m5.large.search" : "m5.large.search",
       },
       ebs: {
         volumeSize: 100,
@@ -60,33 +64,42 @@ export class OpensearchStack extends cdk.Stack {
       },
     });
 
-    new iam.CfnServiceLinkedRole(this, 'Service Linked Role', {
-      awsServiceName: 'es.amazonaws.com',
+    new iam.CfnServiceLinkedRole(this, "Service Linked Role", {
+      awsServiceName: "es.amazonaws.com",
     });
 
-    const defaultSecurityGroup = SecurityGroup.fromSecurityGroupId(this, "SG", vpc.vpcDefaultSecurityGroup);
+    const defaultSecurityGroup = SecurityGroup.fromSecurityGroupId(
+      this,
+      "SG",
+      vpc.vpcDefaultSecurityGroup
+    );
 
-    opensearchSecurityGroup.addIngressRule(ec2.Peer.securityGroupId(defaultSecurityGroup.securityGroupId), ec2.Port.allTraffic(), 'global access to bastion group');
-    opensearchSecurityGroup.addIngressRule(ec2.Peer.securityGroupId(bastionSecurityGroup.securityGroupId), ec2.Port.allTraffic(), 'global access to bastion group');
-    
+    opensearchSecurityGroup.addIngressRule(
+      ec2.Peer.securityGroupId(defaultSecurityGroup.securityGroupId),
+      ec2.Port.allTraffic(),
+      "global access to bastion group"
+    );
+    opensearchSecurityGroup.addIngressRule(
+      ec2.Peer.securityGroupId(bastionSecurityGroup.securityGroupId),
+      ec2.Port.allTraffic(),
+      "global access to bastion group"
+    );
 
-    if(process.env.STAGE === "dev") {
+    if (process.env.STAGE === "dev") {
       opensearchDomain.addAccessPolicies(
         new iam.PolicyStatement({
           effect: iam.Effect.ALLOW,
           resources: ["*"],
-          actions: ['es:*'],
-          principals: [
-            new iam.AnyPrincipal()
-          ]
+          actions: ["es:*"],
+          principals: [new iam.AnyPrincipal()],
         })
-      )
+      );
     }
 
-    new cdk.CfnOutput(this, 'opensearchEndpoint', {
+    new cdk.CfnOutput(this, "opensearchEndpoint", {
       value: opensearchDomain.domainEndpoint,
-      description: 'The endpoint for the opensearch domain',
-      exportName: 'opensearchEndpoint',
+      description: "The endpoint for the opensearch domain",
+      exportName: "opensearchEndpoint",
     });
 
     this.opensearchSecurityGroup = opensearchSecurityGroup;

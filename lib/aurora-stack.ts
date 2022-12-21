@@ -64,7 +64,7 @@ export class AuroraStack extends cdk.Stack {
       cloudwatchLogsRetention: logs.RetentionDays.THREE_DAYS,
       parameterGroup: rdsParamGroup,
       deletionProtection: stage === "production",
-      instances: stage === "production" ? 3 : 1,
+      instances: stage === "production" ? 3 : 2,
       instanceProps: {
         autoMinorVersionUpgrade: true,
         publiclyAccessible: process.env.STAGE === "dev",
@@ -73,7 +73,7 @@ export class AuroraStack extends cdk.Stack {
           ec2.InstanceClass.BURSTABLE3,
           stage === "production"
             ? ec2.InstanceSize.LARGE
-            : ec2.InstanceSize.MEDIUM
+            : ec2.InstanceSize.LARGE
         ),
         vpcSubnets: {
           subnetType:

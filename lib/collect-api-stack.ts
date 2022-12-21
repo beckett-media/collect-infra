@@ -123,5 +123,11 @@ export class CollectApiStack extends cdk.Stack {
       ),
       zone,
     });
+
+    new cdk.CfnOutput(this, "collectApiDomain", {
+      value: API_DOMAIN,
+      description: "The domain for the collect api",
+      exportName: "collectApiDomain",
+    });
   }
 }
