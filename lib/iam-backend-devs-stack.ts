@@ -20,6 +20,7 @@ export class IamBackendDevsStack extends cdk.Stack {
       roleName: "BackendAccess",
       managedPolicies: [
         iam.ManagedPolicy.fromAwsManagedPolicyName("EC2InstanceConnect"),
+        iam.ManagedPolicy.fromAwsManagedPolicyName("AWSLambdaReadOnlyAccess"),
       ],
     });
 
