@@ -46,24 +46,28 @@ export class CollectApiStack extends cdk.Stack {
       certificate: siteCertificate,
     });
 
-    const api = apigwv2.HttpApi.fromHttpApiAttributes(this, "rails-api", {
-      httpApiId: envConfig.collectApiHttpApiId,
-    });
+    if (!!envConfig.collectApiHttpApiId) {
+      // if the collect microservice has been set up, create a domain map to it
 
-    const apiStage = apigwv2.HttpStage.fromHttpStageAttributes(
-      this,
-      "rails-api-stage",
-      {
+      const api = apigwv2.HttpApi.fromHttpApiAttributes(this, "rails-api", {
+        httpApiId: envConfig.collectApiHttpApiId,
+      });
+
+      const apiStage = apigwv2.HttpStage.fromHttpStageAttributes(
+        this,
+        "rails-api-stage",
+        {
+          api,
+          stageName: "$default",
+        }
+      );
+
+      const apiMapping = new apigwv2.ApiMapping(this, "ApiMapping", {
         api,
-        stageName: "$default",
-      }
-    );
-
-    const apiMapping = new apigwv2.ApiMapping(this, "ApiMapping", {
-      api,
-      domainName: dn,
-      stage: apiStage,
-    });
+        domainName: dn,
+        stage: apiStage,
+      });
+    }
 
     // const viewerCertificate = cloudfront.ViewerCertificate.fromAcmCertificate(
     //   siteCertificate,

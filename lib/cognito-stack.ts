@@ -47,18 +47,27 @@ export class CognitoStack extends cdk.Stack {
       certificate: siteCertificate,
     });
 
-    const api = apigwv2.HttpApi.fromHttpApiAttributes(this, "sso", {
-      httpApiId: envConfig.ssoApiHttpApiId,
-    });
+    if (!!envConfig.ssoApiHttpApiId) {
+      // if the sso microservice has been set up, create a domain map to it
+      const api = apigwv2.HttpApi.fromHttpApiAttributes(this, "sso", {
+        httpApiId: envConfig.ssoApiHttpApiId,
+      });
 
-    const apiStage = apigwv2.HttpStage.fromHttpStageAttributes(
-      this,
-      "sso-stage",
-      {
+      const apiStage = apigwv2.HttpStage.fromHttpStageAttributes(
+        this,
+        "sso-stage",
+        {
+          api,
+          stageName: "$default",
+        }
+      );
+
+      new apigwv2.ApiMapping(this, "ApiMapping", {
         api,
-        stageName: "$default",
-      }
-    );
+        domainName: dn,
+        stage: apiStage,
+      });
+    }
 
     const identity = new ses.EmailIdentity(this, "Identity", {
       identity: ses.Identity.publicHostedZone(zone),
@@ -149,12 +158,6 @@ export class CognitoStack extends cdk.Stack {
         adminUserPassword: true,
         userPassword: true,
       },
-    });
-
-    new apigwv2.ApiMapping(this, "ApiMapping", {
-      api,
-      domainName: dn,
-      stage: apiStage,
     });
 
     //TODO: This will need to change when building within Becket AWS
