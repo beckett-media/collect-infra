@@ -79,10 +79,10 @@ export class CognitoStack extends cdk.Stack {
       },
       email: cdk.aws_cognito.UserPoolEmail.withSES({
         sesRegion: "us-east-1",
-        fromEmail: `no-reply@${MAIL_DOMAIN}`,
+        fromEmail: `no-reply@${DOMAIN_NAME}`,
         fromName: "Beckett",
-        replyTo: `support@${MAIL_DOMAIN}`,
-        sesVerifiedDomain: MAIL_DOMAIN,
+        replyTo: `support@${DOMAIN_NAME}`,
+        sesVerifiedDomain: DOMAIN_NAME,
       }),
       passwordPolicy: {
         minLength: 7,
@@ -140,6 +140,8 @@ export class CognitoStack extends cdk.Stack {
         // },
       },
     });
+
+    userPool.node.addDependency(identity);
 
     const client = userPool.addClient("global-app-client", {
       accessTokenValidity: Duration.minutes(60),
