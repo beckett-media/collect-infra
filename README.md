@@ -12,7 +12,7 @@ The various [services that comprise the Noxx Platform](https://github.com/NoXX-T
 
 `$ npm install -g typescript`
 
-## Access 
+## Access
 
 You'll need an AWS IAM user account in the root AWS account. And that user will need to be in the IAM group `platform-engineers`.
 
@@ -20,29 +20,29 @@ Once that is done, you'll need to add a profile block to your `~/.aws/credential
 
 ### ~/.aws/credentials
 
-````
+```
 [<PROFILE NAME>]
 role_arn=arn:aws:iam::xxxxxxx:role/OrganizationAccountAccessRole
 source_profile=<SOURCE PROFILE>
 region=us-east-1
-````
+```
 
 ### ~/.aws/config
-````  
+
+```
 [profile <PROFILE NAME>]
 role_arn=arn:aws:iam::xxxxxxx:role/OrganizationAccountAccessRole
 source_profile=<SOURCE PROFILE>
 region=us-east-1
-````
+```
 
 In both cases, SOURCE PROFILE should reference the AWS IAM user in the root AWS account, like this:
 
-````
+```
 [<SOURCE PROFILE>]
 aws_access_key_id=xxxxx
 aws_secret_access_key=xxxxxxx
-````
-
+```
 
 ## Deploying
 
@@ -66,10 +66,13 @@ Note: the profile you use must have `organizations:CreateAccount` permissions in
 
 `$ cdk bootstrap aws://<account-number>/us-east-1 --profile <profile>`
 
-
 ## Collect Frontend
 
-If you are creating a new environment (or want to change the domain for an existing environment), you'll first have to purchase the domain from AWS and wait for it to be registered. Then add that domain name to `[environment-config.ts](util/environment-config.ts)`
+If you are creating a new environment (or want to change the domain for an existing environment), you'll first have to purchase the domain from AWS and wait for it to be registered. Then add that domain name to `[environment-config.ts](util/environment-config.ts)`. NOTE: registering a domain through Amazon Route53 will automatically create a Hosted Zone, so there is no need to do that.
+
+## Config File
+
+Please read `[environment-config.ts](util/environment-config.ts)` to see what the various parameters do.
 
 ## VPN
 
@@ -87,22 +90,20 @@ In order for the VPN Endpoint to be created, the environment-config.ts needs an 
 
 Run the following command (ask the platform team for the ENDPOINT ID. The "ENV" variable is the envrionemt you're trying to connect to (i.e. dev, staging, production). Note - if you haven't set up that profile using the steps earlier, this will not work.
 
-````
+```
 $ aws ec2 export-client-vpn-client-configuration \
 --client-vpn-endpoint-id "cvpn-endpoint-<ENDPOINT ID>" \
 --output text > myclientconfig.ovpn --profile noxx-<ENV>
-````
+```
 
 Because our AWS Client VPN endpoint uses mutual authentication, you must add the client certificate and the client private key to the configuration file that you download. To do this, open the configuration file using a text editor and add the following lines to the end of the file, providing the path to the client certificate and key that was created earlier.
 
-````
+```
 cert /<PATH>/client1.domain.tld.crt
 key /<PATH>/client1.domain.tld.key
-````
+```
 
 You'll need to request the `.crt` and `.key` from someone on the platform team. PATH is where you choose to store them.
-
-
 
 ## Overview
 

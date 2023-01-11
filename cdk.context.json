@@ -2,5 +2,9 @@
   "hosted-zone:account=223560911013:domainName=beckettcollectdev.com:region=us-east-1": {
     "Id": "/hostedzone/Z005294522C2BZMIJCFAB",
     "Name": "beckettcollectdev.com."
+  },
+  "hosted-zone:account=807430335579:domainName=beckettcollectstaging.com:region=us-east-1": {
+    "Id": "/hostedzone/Z05879422BJ1Z6QHSLJO9",
+    "Name": "beckettcollectstaging.com."
   }
 }
