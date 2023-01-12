@@ -7,7 +7,7 @@ import * as s3 from "aws-cdk-lib/aws-s3";
 import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import environmentConfig, {
-  IEnvironmentConfig,
+  IEnvironmentConfig
 } from "../util/environment-config";
 
 interface CollectFrontendStackProps extends cdk.StackProps {
@@ -21,7 +21,7 @@ export class CollectFrontendStack extends cdk.Stack {
     const { stage } = props;
     const envConfig: IEnvironmentConfig = environmentConfig(stage);
     const DOMAIN_NAME = envConfig.domainName;
-    const WEB_APP_DOMAIN = `collect.${DOMAIN_NAME}`;
+    const WEB_APP_DOMAIN = `${DOMAIN_NAME}`;
 
     const zone = route53.HostedZone.fromLookup(this, "Zone", {
       domainName: DOMAIN_NAME,

@@ -34,40 +34,40 @@ const envDetails = {
 //   stage,
 //   terminationProtection: stage === "production",
 // });
-const auroraStack = new AuroraStack(app, "AuroraClusterStack", {
+const auroraStack = new AuroraStack(app, "CollectAuroraClusterStack-"+stage, {
   stage,
   terminationProtection: stage === "production",
   env: envDetails
 });
-const bastionStack = new BastionStack(app, "BastionStack", {
+const bastionStack = new BastionStack(app, "CollectBastionStack-"+stage, {
   stage,
   terminationProtection: stage === "production",
   env: envDetails
 });
-const elasticacheStack = new ElasticacheStack(app, "ElasticacheStack", {
+const elasticacheStack = new ElasticacheStack(app, "CollectElasticacheStack-"+stage, {
   stage,
   terminationProtection: stage === "production",
   env: envDetails
 });
-const iamDeployUserStack = new IamDeployUserStack(app, "IamDeployUserStack", {
+const iamDeployUserStack = new IamDeployUserStack(app, "CollectIamDeployUserStack-"+stage, {
   stage,
   terminationProtection: stage === "production",
   env: envDetails
 });
-const opensearchStack = new OpensearchStack(app, "OpensearchStack", {
+const opensearchStack = new OpensearchStack(app, "CollectOpensearchStack-"+stage, {
   stage,
   bastionSecurityGroup: bastionStack.bastionSecurityGroup,
   terminationProtection: stage === "production",
   env: envDetails
 });
-const s3UploadsStack = new S3UploadsStack(app, "S3UploadsStack", {
+const s3UploadsStack = new S3UploadsStack(app, "CollectS3UploadsStack-"+stage, {
   stage,
   terminationProtection: stage === "production",
   env: envDetails
 });
 const s3StaticAssetsStack = new S3StaticAssetsStack(
   app,
-  "S3StaticAssetsStack",
+  "CollectS3StaticAssetsStack-"+stage,
   {
     stage,
     terminationProtection: stage === "production",
@@ -75,28 +75,29 @@ const s3StaticAssetsStack = new S3StaticAssetsStack(
   }
 );
 
-const cwStack = new AwsCdkCloudWatchStack(app, "AwsCdkAuroraAlarmsStack", {
+const cwStack = new AwsCdkCloudWatchStack(app, "CollectAwsCdkAuroraAlarmsStack-"+stage, {
   dbCluster: auroraStack.dbCluster,
   email: process.env.EMAIL ?? "cswann@beckett.com", //TODO: This should be an engineering alias to alert them of problems such as slow queries
   env: envDetails
 });
-const cognitoStack = new CognitoStack(app, "AwsCognitoStack", {
+const cognitoStack = new CognitoStack(app, "CollectAwsCognitoStack-"+stage, {
   stage,
   env: envDetails
 });
-const backupStack = new BackupStack(app, "AwsBackupStack", {
-  stage,
-});
-const collectFrontEnd = new CollectFrontendStack(app, "CollectFrontendStack", {
+const backupStack = new BackupStack(app, "CollectAwsBackupStack-"+stage, {
   stage,
   env: envDetails
 });
-const collectApiStack = new CollectApiStack(app, "CollectApiStack", {
+const collectFrontEnd = new CollectFrontendStack(app, "CollectFrontendStack-"+stage, {
+  stage,
+  env: envDetails
+});
+const collectApiStack = new CollectApiStack(app, "CollectApiStack-"+stage, {
   stage,
   env: envDetails
 });
 
-const iamBackendDev = new IamBackendDevsStack(app, "IamBackendDevsStack", {
+const iamBackendDev = new IamBackendDevsStack(app, "CollectIamBackendDevsStack-"+stage, {
   stage,
   env: envDetails
 });
@@ -108,7 +109,7 @@ const iamBackendDev = new IamBackendDevsStack(app, "IamBackendDevsStack", {
 //       vpc: vpcStack.vpc,
 //     });
 
-new NoxxInfrastructureStack(app, "NoxxInfrastructureStack", {
+new NoxxInfrastructureStack(app, "CollectInfrastructureStack-"+stage, {
   stage,
   env: envDetails
 });
