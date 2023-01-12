@@ -10,7 +10,6 @@ import environmentConfig, {
 
 interface S3UploadsStackProps extends cdk.StackProps {
   stage: "dev" | "staging" | "production";
-  vpc: cdk.aws_ec2.Vpc;
 }
 
 //TODO: Consider adding a Beckett CNAME for CloudFront
@@ -19,7 +18,7 @@ export class S3UploadsStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: S3UploadsStackProps) {
     super(scope, id, props);
 
-    const { stage, vpc } = props;
+    const { stage } = props;
     const envConfig: IEnvironmentConfig = environmentConfig(stage);
 
     const userUploadBucket = new s3.Bucket(this, "userUploadBucket", {

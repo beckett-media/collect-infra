@@ -1,18 +1,15 @@
 import * as cdk from "aws-cdk-lib";
 import { Tags } from "aws-cdk-lib";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
-import { SecurityGroup } from "aws-cdk-lib/aws-ec2";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as logs from "aws-cdk-lib/aws-logs";
 import * as rds from "aws-cdk-lib/aws-rds";
 import { Construct } from "constructs";
-import environmentConfig, {
-  IEnvironmentConfig,
-} from "../util/environment-config";
+import { BaseInfra } from "../lib/base-infra";
+import environmentConfig, { IEnvironmentConfig } from "../util/environment-config";
 
 interface AuroraStackProps extends cdk.StackProps {
   stage: "dev" | "staging" | "production";
-  vpc: cdk.aws_ec2.Vpc;
 }
 
 export class AuroraStack extends cdk.Stack {
@@ -22,8 +19,12 @@ export class AuroraStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: AuroraStackProps) {
     super(scope, id, props);
 
-    const { stage, vpc } = props;
+    const { stage } = props;
     const envConfig: IEnvironmentConfig = environmentConfig(stage);
+
+    const baseInfra = new BaseInfra(this, 'baseInfra', { stage: stage });
+    const vpc = baseInfra.vpc
+    const privateSubnets = baseInfra.privateSubnets
 
     const clusterUser = "clusteradmin";
     const credentials = rds.Credentials.fromGeneratedSecret(clusterUser);
@@ -51,11 +52,11 @@ export class AuroraStack extends cdk.Stack {
       }
     );
 
-    const defaultSecurityGroup = SecurityGroup.fromSecurityGroupId(
-      this,
-      "SG",
-      vpc.vpcDefaultSecurityGroup
-    );
+    // const defaultSecurityGroup = SecurityGroup.fromSecurityGroupId(
+    //   this,
+    //   "SG",
+    //   vpc.vpcDefaultSecurityGroup
+    // );
 
     const cluster = new rds.DatabaseCluster(this, "Database", {
       engine,
@@ -76,10 +77,7 @@ export class AuroraStack extends cdk.Stack {
             : ec2.InstanceSize.LARGE
         ),
         vpcSubnets: {
-          subnetType:
-            stage === "dev"
-              ? ec2.SubnetType.PUBLIC
-              : ec2.SubnetType.PRIVATE_WITH_NAT, // SWITCH TO PRIVATE_ISOLATED IF DONT NEED VPC to VPC connectivity
+          subnets: privateSubnets
         },
         vpc,
       },
@@ -91,6 +89,9 @@ export class AuroraStack extends cdk.Stack {
       secrets: [cluster.secret!],
       debugLogging: true,
       vpc,
+      vpcSubnets: {
+        subnets: privateSubnets
+      },
       securityGroups: [clusterSecurityGroup],
       iamAuth: true,
     });
@@ -112,11 +113,11 @@ export class AuroraStack extends cdk.Stack {
       );
     }
 
-    clusterSecurityGroup.addIngressRule(
-      ec2.Peer.securityGroupId(defaultSecurityGroup.securityGroupId),
-      ec2.Port.allTraffic(),
-      "postgres for default group"
-    );
+    // clusterSecurityGroup.addIngressRule(
+    //   ec2.Peer.securityGroupId(defaultSecurityGroup.securityGroupId),
+    //   ec2.Port.allTraffic(),
+    //   "postgres for default group"
+    // );
 
     targetGroup.addPropertyOverride("TargetGroupName", "default");
 

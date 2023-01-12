@@ -1,12 +1,11 @@
 import * as cdk from 'aws-cdk-lib';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
-import { SecurityGroup } from 'aws-cdk-lib/aws-ec2';
 import * as elasticache from 'aws-cdk-lib/aws-elasticache';
 import { Construct } from 'constructs';
+import { BaseInfra } from "../lib/base-infra";
 
 interface ElasticacheStackProps extends cdk.StackProps {
   stage: "dev" | "staging" | "production";
-  vpc: cdk.aws_ec2.Vpc;
 }
 
 export class ElasticacheStack extends cdk.Stack {
@@ -15,15 +14,18 @@ export class ElasticacheStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: ElasticacheStackProps) {
     super(scope, id, props);
 
-    const { stage, vpc } = props;
+    const { stage } = props;
 
+    const baseInfra = new BaseInfra(this, 'baseInfra', { stage: stage });
+    const vpc = baseInfra.vpc
+    const privateSubnets = baseInfra.privateSubnets
     
     const redisSubnetGroup = new elasticache.CfnSubnetGroup(
       this,
       `RedisSubnetGroup`,
       {
         description: "Subnet group for  redis cluster",
-        subnetIds: vpc.privateSubnets.map(ps => ps.subnetId),
+        subnetIds: privateSubnets.map(ps => ps.subnetId),
         cacheSubnetGroupName: "Redis-Subnet-Group",
       }
     );
@@ -53,11 +55,11 @@ export class ElasticacheStack extends cdk.Stack {
       }
     );
 
-    const defaultSecurityGroup = SecurityGroup.fromSecurityGroupId(this, "SG", vpc.vpcDefaultSecurityGroup);
+    // const defaultSecurityGroup = SecurityGroup.fromSecurityGroupId(this, "SG", vpc.vpcDefaultSecurityGroup);
 
     redisCache.addDependsOn(redisSubnetGroup);
 
-    redisSecurityGroup.addIngressRule(ec2.Peer.securityGroupId(defaultSecurityGroup.securityGroupId), ec2.Port.allTraffic(), 'global access to default group');
+    // redisSecurityGroup.addIngressRule(ec2.Peer.securityGroupId(defaultSecurityGroup.securityGroupId), ec2.Port.allTraffic(), 'global access to default group');
 
     new cdk.CfnOutput(this, `RedisCacheEndpointUrl`, {
       value: redisCache.attrRedisEndpointAddress,
