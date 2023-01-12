@@ -6,14 +6,13 @@ import { Construct } from "constructs";
 
 interface BackupStackProps extends cdk.StackProps {
   stage: "dev" | "staging" | "production";
-  vpc: cdk.aws_ec2.Vpc;
 }
 
 export class BackupStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: BackupStackProps) {
     super(scope, id, props);
 
-    const { stage, vpc } = props;
+    const { stage } = props;
 
     const plan = backup.BackupPlan.dailyWeeklyMonthly5YearRetention(
       this,

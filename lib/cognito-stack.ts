@@ -13,14 +13,13 @@ import environmentConfig from "../util/environment-config";
 
 interface CognitoStackProps extends cdk.StackProps {
   stage: "dev" | "staging" | "production";
-  vpc: cdk.aws_ec2.Vpc;
 }
 
 export class CognitoStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: CognitoStackProps) {
     super(scope, id, props);
 
-    const { stage, vpc } = props;
+    const { stage } = props;
     const envConfig = environmentConfig(stage);
     const DOMAIN_NAME = envConfig.domainName;
     const SSO_DOMAIN = `sso.${DOMAIN_NAME}`;

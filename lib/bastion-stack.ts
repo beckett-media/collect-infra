@@ -1,11 +1,10 @@
 import * as cdk from 'aws-cdk-lib';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
-import { SecurityGroup } from 'aws-cdk-lib/aws-ec2';
 import { Construct } from 'constructs';
+import { BaseInfra } from "../lib/base-infra";
 
 interface BastionStackProps extends cdk.StackProps {
   stage: "dev" | "staging" | "production";
-  vpc: cdk.aws_ec2.Vpc;
 }
 
 export class BastionStack extends cdk.Stack {
@@ -14,7 +13,11 @@ export class BastionStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: BastionStackProps) {
     super(scope, id, props);
 
-    const { stage, vpc } = props;
+    const { stage } = props;
+
+    const baseInfra = new BaseInfra(this, 'baseInfra', { stage: stage });
+    const vpc = baseInfra.vpc
+    const publicSubnets = baseInfra.publicSubnets
 
     const bastionSecurityGroup = new ec2.SecurityGroup(this, 'BastionSecurityGroup', {
       vpc,
@@ -35,7 +38,7 @@ export class BastionStack extends cdk.Stack {
     const createSshKeyCommand = 'ssh-keygen -t rsa -f noxx-key';
     const pushSshKeyCommand = `aws ec2-instance-connect send-ssh-public-key --region ${cdk.Aws.REGION} --instance-id ${bastionHostLinux.instanceId} --availability-zone ${bastionHostLinux.instanceAvailabilityZone} --instance-os-user ec2-user --ssh-public-key file://noxx-key.pub ${profile ? `--profile ${profile}` : ''}`;
     const sshCommand = `ssh -o "IdentitiesOnly=yes" -i noxx-key ec2-user@${bastionHostLinux.instancePublicDnsName}`;
-    const defaultSecurityGroup = SecurityGroup.fromSecurityGroupId(this, "SG", vpc.vpcDefaultSecurityGroup);
+    // const defaultSecurityGroup = SecurityGroup.fromSecurityGroupId(this, "SG", vpc.vpcDefaultSecurityGroup);
 
     bastionSecurityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(22), 'SSH access');
             

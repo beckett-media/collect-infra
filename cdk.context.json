@@ -1,7 +1,58 @@
 {
-  "hosted-zone:account=223560911013:domainName=beckettcollectdev.com:region=us-east-1": {
-    "Id": "/hostedzone/Z005294522C2BZMIJCFAB",
-    "Name": "beckettcollectdev.com."
+  "vpc-provider:account=807430335579:filter.vpc-id=vpc-0592a7e113b0bdb10:region=us-east-1:returnAsymmetricSubnets=true": {
+    "vpcId": "vpc-0592a7e113b0bdb10",
+    "vpcCidrBlock": "10.10.160.0/20",
+    "availabilityZones": [],
+    "subnetGroups": [
+      {
+        "name": "Public",
+        "type": "Public",
+        "subnets": [
+          {
+            "subnetId": "subnet-086b09e5718569ad4",
+            "cidr": "10.10.160.0/23",
+            "availabilityZone": "us-east-1a",
+            "routeTableId": "rtb-006235241ecae0a72"
+          },
+          {
+            "subnetId": "subnet-0672fa40f9663afed",
+            "cidr": "10.10.162.0/23",
+            "availabilityZone": "us-east-1b",
+            "routeTableId": "rtb-02fe8d922966705c7"
+          }
+        ]
+      },
+      {
+        "name": "Isolated",
+        "type": "Isolated",
+        "subnets": [
+          {
+            "subnetId": "subnet-0ea269f425b0815f3",
+            "cidr": "10.10.164.0/23",
+            "availabilityZone": "us-east-1a",
+            "routeTableId": "rtb-0f0d2e4a52538fd47"
+          },
+          {
+            "subnetId": "subnet-0182f0102ff21b14b",
+            "cidr": "10.10.168.0/23",
+            "availabilityZone": "us-east-1a",
+            "routeTableId": "rtb-08c77742d1fc07f99"
+          },
+          {
+            "subnetId": "subnet-0a48f67c6eb3eefe6",
+            "cidr": "10.10.170.0/23",
+            "availabilityZone": "us-east-1b",
+            "routeTableId": "rtb-0eb0286e9c509cddc"
+          },
+          {
+            "subnetId": "subnet-05ccd99ff68068fe7",
+            "cidr": "10.10.166.0/23",
+            "availabilityZone": "us-east-1b",
+            "routeTableId": "rtb-0193067819ab5d157"
+          }
+        ]
+      }
+    ]
   },
   "hosted-zone:account=807430335579:domainName=beckettcollectstaging.com:region=us-east-1": {
     "Id": "/hostedzone/Z05879422BJ1Z6QHSLJO9",

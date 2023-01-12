@@ -1,13 +1,12 @@
 import * as cdk from "aws-cdk-lib";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
-import { SecurityGroup } from "aws-cdk-lib/aws-ec2";
 import * as iam from "aws-cdk-lib/aws-iam";
 import { Domain, EngineVersion } from "aws-cdk-lib/aws-opensearchservice";
 import { Construct } from "constructs";
+import { BaseInfra } from "../lib/base-infra";
 
 interface OpensearchStackProps extends cdk.StackProps {
   stage: "dev" | "staging" | "production";
-  vpc: cdk.aws_ec2.Vpc;
   bastionSecurityGroup: cdk.aws_ec2.SecurityGroup;
 }
 
@@ -17,7 +16,11 @@ export class OpensearchStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: OpensearchStackProps) {
     super(scope, id, props);
 
-    const { stage, vpc, bastionSecurityGroup } = props;
+    const { stage, bastionSecurityGroup } = props;
+
+    const baseInfra = new BaseInfra(this, 'baseInfra', { stage: stage });
+    const vpc = baseInfra.vpc
+    const privateSubnets = baseInfra.privateSubnets
 
     const opensearchSecurityGroup = new ec2.SecurityGroup(
       this,
@@ -35,7 +38,7 @@ export class OpensearchStack extends cdk.Stack {
       securityGroups: [opensearchSecurityGroup],
       vpcSubnets: [
         {
-          subnets: [vpc.privateSubnets[0]],
+          subnets: [privateSubnets[0]],
         },
         // {
         //   subnetType: ec2.SubnetType.PRIVATE_WITH_NAT,
@@ -68,17 +71,17 @@ export class OpensearchStack extends cdk.Stack {
       awsServiceName: "es.amazonaws.com",
     });
 
-    const defaultSecurityGroup = SecurityGroup.fromSecurityGroupId(
-      this,
-      "SG",
-      vpc.vpcDefaultSecurityGroup
-    );
+    // const defaultSecurityGroup = SecurityGroup.fromSecurityGroupId(
+    //   this,
+    //   "SG",
+    //   vpc.vpcDefaultSecurityGroup
+    // );
 
-    opensearchSecurityGroup.addIngressRule(
-      ec2.Peer.securityGroupId(defaultSecurityGroup.securityGroupId),
-      ec2.Port.allTraffic(),
-      "global access to bastion group"
-    );
+    // opensearchSecurityGroup.addIngressRule(
+    //   ec2.Peer.securityGroupId(defaultSecurityGroup.securityGroupId),
+    //   ec2.Port.allTraffic(),
+    //   "global access to bastion group"
+    // );
     opensearchSecurityGroup.addIngressRule(
       ec2.Peer.securityGroupId(bastionSecurityGroup.securityGroupId),
       ec2.Port.allTraffic(),

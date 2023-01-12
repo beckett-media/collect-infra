@@ -7,6 +7,13 @@ export interface IEnvironmentConfig {
   readonly collectApiHttpApiId: string;
   readonly ssoApiHttpApiId: string;
   readonly isBeckett: boolean;
+  readonly awsAccountId: string;
+  readonly awsRegion: string;
+  readonly vpcId: string;
+  readonly publicSubnetsIds: string[];
+  readonly publicSubnetsRtbIds: string[];
+  readonly privateSubnetsIds: string[];
+  readonly privateSubnetsRtbIds: string[];
 }
 
 const environmentConfig = (environmentName: string): IEnvironmentConfig => {
@@ -20,6 +27,13 @@ const environmentConfig = (environmentName: string): IEnvironmentConfig => {
       collectApiHttpApiId: string;
       ssoApiHttpApiId: string;
       isBeckett: boolean;
+      awsAccountId: string;
+      awsRegion: string;
+      vpcId: string;
+      publicSubnetsIds: string[];
+      publicSubnetsRtbIds: string[];
+      privateSubnetsIds: string[];
+      privateSubnetsRtbIds: string[];
     };
   } = {
     dev: {
@@ -33,6 +47,13 @@ const environmentConfig = (environmentName: string): IEnvironmentConfig => {
       collectApiHttpApiId: "e2hleqcy71",
       ssoApiHttpApiId: "dautelb593",
       isBeckett: false,
+      awsAccountId: "",
+      awsRegion: "",
+      vpcId: "",
+      publicSubnetsIds: [],
+      publicSubnetsRtbIds: [],
+      privateSubnetsIds: [],
+      privateSubnetsRtbIds: [],
     },
     staging: {
       backup: false, // Whether or not the database and S3 buckets should be backed up with AWS Backup
@@ -43,6 +64,13 @@ const environmentConfig = (environmentName: string): IEnvironmentConfig => {
       collectApiHttpApiId: "", // The API Gateway id of the collect api, which is deployed seperately. Note: This CDK code must be deployed prior to the collect api service. After this is deployed, you can deploy the api, grab the id, put it here and redeploy
       ssoApiHttpApiId: "", // The API Gateway id of the sso api, which is deployed seperately. Note: This CDK code must be deployed prior to the sso api service. After this is deployed, you can deploy SSO, grab the id, put it here and redeploy
       isBeckett: true, // Whether this environment is on a Beckett AWS account or a Noxx AWS account
+      awsAccountId: "807430335579",
+      awsRegion: "us-east-1",
+      vpcId: "vpc-0592a7e113b0bdb10",
+      publicSubnetsIds: ["subnet-086b09e5718569ad4", "subnet-0672fa40f9663afed"],
+      publicSubnetsRtbIds: ["rtb-006235241ecae0a72", "rtb-02fe8d922966705c7"],
+      privateSubnetsIds: ["subnet-0ea269f425b0815f3", "subnet-05ccd99ff68068fe7"],
+      privateSubnetsRtbIds: ["rtb-0f0d2e4a52538fd47", "rtb-0193067819ab5d157"],
     },
     production: {
       backup: false,
@@ -53,6 +81,13 @@ const environmentConfig = (environmentName: string): IEnvironmentConfig => {
       collectApiHttpApiId: "",
       ssoApiHttpApiId: "",
       isBeckett: true,
+      awsAccountId: "",
+      awsRegion: "",
+      vpcId: "",
+      publicSubnetsIds: [],
+      publicSubnetsRtbIds: [],
+      privateSubnetsIds: [],
+      privateSubnetsRtbIds: [],
     },
   };
   return environmentMapper[environmentName];

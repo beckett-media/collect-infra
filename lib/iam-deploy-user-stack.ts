@@ -5,14 +5,13 @@ import { Construct } from 'constructs';
 
 interface IamDeployUserStackProps extends cdk.StackProps {
   stage: "dev" | "staging" | "production";
-  vpc: cdk.aws_ec2.Vpc;
 }
 
 export class IamDeployUserStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: IamDeployUserStackProps) {
     super(scope, id, props);
 
-    const { stage, vpc } = props;
+    const { stage } = props;
 
     const user = new iam.User(this, "deployBotIamUser", {
       userName: "deployBot",
@@ -30,8 +29,8 @@ export class IamDeployUserStack extends cdk.Stack {
     });
 
     user.addToPolicy(new iam.PolicyStatement({
-      effect: iam.Effect.ALLOW,
-      resources: ["*"],
+        effect: iam.Effect.ALLOW,
+        resources: ["*"],
       actions: ['ssm:GetParametersByPath', 'cloudformation:CreateChangeSet']
     }));
 

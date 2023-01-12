@@ -5,14 +5,13 @@ import environmentConfig from "../util/environment-config";
 
 interface iamBackendDevsStackProps extends cdk.StackProps {
   stage: "dev" | "staging" | "production";
-  vpc: cdk.aws_ec2.Vpc;
 }
 
 export class IamBackendDevsStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: iamBackendDevsStackProps) {
     super(scope, id, props);
 
-    const { stage, vpc } = props;
+    const { stage } = props;
     const envConfig = environmentConfig(stage);
 
     const role = new iam.Role(this, "backenddevs", {

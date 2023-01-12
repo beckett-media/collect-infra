@@ -11,7 +11,6 @@ import environmentConfig from "../util/environment-config";
 
 interface S3StaticAssetsStackProps extends cdk.StackProps {
   stage: "dev" | "staging" | "production";
-  vpc: cdk.aws_ec2.Vpc;
 }
 
 export class S3StaticAssetsStack extends cdk.Stack {
