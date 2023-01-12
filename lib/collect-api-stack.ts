@@ -7,7 +7,7 @@ import * as apigwv2 from "@aws-cdk/aws-apigatewayv2-alpha";
 import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import environmentConfig, {
-  IEnvironmentConfig,
+  IEnvironmentConfig
 } from "../util/environment-config";
 
 interface CollectApiStackProps extends cdk.StackProps {
@@ -21,7 +21,7 @@ export class CollectApiStack extends cdk.Stack {
     const { stage } = props;
     const envConfig: IEnvironmentConfig = environmentConfig(stage);
     const DOMAIN_NAME = envConfig.domainName;
-    const API_DOMAIN = `collectapi.${DOMAIN_NAME}`;
+    const API_DOMAIN = `api.${DOMAIN_NAME}`;
 
     //TODO: This will need to change when building within Becket AWS
     const zone = route53.HostedZone.fromLookup(this, "Zone", {

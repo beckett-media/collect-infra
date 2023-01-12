@@ -20,7 +20,7 @@ export class S3StaticAssetsStack extends cdk.Stack {
     const { stage } = props;
     const envConfig = environmentConfig(stage);
     const DOMAIN_NAME = envConfig.domainName;
-    const ASSET_DOMAIN = `collectassets.${DOMAIN_NAME}`;
+    const ASSET_DOMAIN = `assets.${DOMAIN_NAME}`;
 
     const zone = route53.HostedZone.fromLookup(this, "Zone", {
       domainName: DOMAIN_NAME,
