@@ -2,11 +2,11 @@ import * as cdk from "aws-cdk-lib";
 import { SecurityGroup } from "aws-cdk-lib/aws-ec2";
 import { Construct } from "constructs";
 import environmentConfig, {
-  IEnvironmentConfig,
+  IEnvironmentConfig
 } from "../util/environment-config";
 
 interface VpnStackProps extends cdk.StackProps {
-  stage: "dev" | "staging" | "production";
+  stage: "dev" | "preprod" | "production";
   vpc: cdk.aws_ec2.Vpc;
 }
 

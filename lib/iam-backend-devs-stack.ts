@@ -4,7 +4,7 @@ import { Construct } from "constructs";
 import environmentConfig from "../util/environment-config";
 
 interface iamBackendDevsStackProps extends cdk.StackProps {
-  stage: "dev" | "staging" | "production";
+  stage: "dev" | "preprod" | "production";
 }
 
 export class IamBackendDevsStack extends cdk.Stack {

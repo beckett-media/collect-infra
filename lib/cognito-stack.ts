@@ -12,7 +12,7 @@ import { Construct } from "constructs";
 import environmentConfig from "../util/environment-config";
 
 interface CognitoStackProps extends cdk.StackProps {
-  stage: "dev" | "staging" | "production";
+  stage: "dev" | "preprod" | "production";
 }
 
 export class CognitoStack extends cdk.Stack {

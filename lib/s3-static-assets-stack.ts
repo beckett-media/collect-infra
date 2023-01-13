@@ -10,7 +10,7 @@ import { Construct } from "constructs";
 import environmentConfig from "../util/environment-config";
 
 interface S3StaticAssetsStackProps extends cdk.StackProps {
-  stage: "dev" | "staging" | "production";
+  stage: "dev" | "preprod" | "production";
 }
 
 export class S3StaticAssetsStack extends cdk.Stack {

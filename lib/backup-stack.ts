@@ -5,7 +5,7 @@ import { Schedule } from "aws-cdk-lib/aws-events";
 import { Construct } from "constructs";
 
 interface BackupStackProps extends cdk.StackProps {
-  stage: "dev" | "staging" | "production";
+  stage: "dev" | "preprod" | "production";
 }
 
 export class BackupStack extends cdk.Stack {

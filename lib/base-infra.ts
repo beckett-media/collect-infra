@@ -5,7 +5,7 @@ import environmentConfig, {
 } from "../util/environment-config";
 
 export interface BaseInfraProps {
-  stage: "dev" | "staging" | "production";
+  stage: "dev" | "preprod" | "production";
 }
 
 export class BaseInfra extends Construct {

@@ -9,7 +9,7 @@ import { BaseInfra } from "../lib/base-infra";
 import environmentConfig, { IEnvironmentConfig } from "../util/environment-config";
 
 interface AuroraStackProps extends cdk.StackProps {
-  stage: "dev" | "staging" | "production";
+  stage: "dev" | "preprod" | "production";
 }
 
 export class AuroraStack extends cdk.Stack {

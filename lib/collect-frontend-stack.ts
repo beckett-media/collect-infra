@@ -11,7 +11,7 @@ import environmentConfig, {
 } from "../util/environment-config";
 
 interface CollectFrontendStackProps extends cdk.StackProps {
-  stage: "dev" | "staging" | "production";
+  stage: "dev" | "preprod" | "production";
 }
 
 export class CollectFrontendStack extends cdk.Stack {

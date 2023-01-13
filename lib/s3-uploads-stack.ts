@@ -5,11 +5,11 @@ import * as origins from "aws-cdk-lib/aws-cloudfront-origins";
 import * as s3 from "aws-cdk-lib/aws-s3";
 import { Construct } from "constructs";
 import environmentConfig, {
-  IEnvironmentConfig,
+  IEnvironmentConfig
 } from "../util/environment-config";
 
 interface S3UploadsStackProps extends cdk.StackProps {
-  stage: "dev" | "staging" | "production";
+  stage: "dev" | "preprod" | "production";
 }
 
 //TODO: Consider adding a Beckett CNAME for CloudFront

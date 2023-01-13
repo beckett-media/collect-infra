@@ -4,7 +4,7 @@ import { CfnAccessKey } from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
 
 interface IamDeployUserStackProps extends cdk.StackProps {
-  stage: "dev" | "staging" | "production";
+  stage: "dev" | "preprod" | "production";
 }
 
 export class IamDeployUserStack extends cdk.Stack {

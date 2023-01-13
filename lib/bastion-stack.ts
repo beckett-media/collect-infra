@@ -4,7 +4,7 @@ import { Construct } from 'constructs';
 import { BaseInfra } from "../lib/base-infra";
 
 interface BastionStackProps extends cdk.StackProps {
-  stage: "dev" | "staging" | "production";
+  stage: "dev" | "preprod" | "production";
 }
 
 export class BastionStack extends cdk.Stack {

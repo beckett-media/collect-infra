@@ -3,7 +3,7 @@ import * as ec2 from "aws-cdk-lib/aws-ec2";
 import { Construct } from "constructs";
 
 interface VpcStackProps extends cdk.StackProps {
-  stage: "dev" | "staging" | "production";
+  stage: "dev" | "preprod" | "production";
 }
 
 //TODO: This may have to be modified to use existing VPCs?
@@ -18,7 +18,7 @@ export class VpcStack extends cdk.Stack {
 
     const cidrMapping = {
       dev: "10.51.0.0/16",
-      staging: "10.50.0.0/16",
+      preprod: "10.50.0.0/16",
       production: "10.52.0.0/16",
     };
 

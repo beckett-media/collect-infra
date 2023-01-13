@@ -5,7 +5,7 @@ import { Construct } from 'constructs';
 import { BaseInfra } from "../lib/base-infra";
 
 interface ElasticacheStackProps extends cdk.StackProps {
-  stage: "dev" | "staging" | "production";
+  stage: "dev" | "preprod" | "production";
 }
 
 export class ElasticacheStack extends cdk.Stack {

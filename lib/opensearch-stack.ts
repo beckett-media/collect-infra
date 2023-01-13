@@ -6,7 +6,7 @@ import { Construct } from "constructs";
 import { BaseInfra } from "../lib/base-infra";
 
 interface OpensearchStackProps extends cdk.StackProps {
-  stage: "dev" | "staging" | "production";
+  stage: "dev" | "preprod" | "production";
   bastionSecurityGroup: cdk.aws_ec2.SecurityGroup;
 }
 

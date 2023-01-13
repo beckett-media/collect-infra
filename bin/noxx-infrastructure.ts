@@ -22,7 +22,7 @@ if (!process.env.STAGE) {
   throw new Error("You must pass STAGE as a variable to this script");
 }
 
-const stage = process.env.STAGE as unknown as "dev" | "staging" | "production";
+const stage = process.env.STAGE as unknown as "dev" | "preprod" | "production";
 
 const app = new cdk.App();
 const envConfig: IEnvironmentConfig = environmentConfig(stage);
