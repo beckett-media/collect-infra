@@ -46,7 +46,7 @@ aws_secret_access_key=xxxxxxx
 
 ## Deploying
 
-`$ STAGE=<dev|staging|production> cdk deploy --profile <profile> --all`
+`$ STAGE=<dev|preprod|production> cdk deploy --profile <profile> --all`
 
 ## Creating a new environment
 
@@ -88,7 +88,7 @@ In order for the VPN Endpoint to be created, the environment-config.ts needs an 
 
 [Download](https://aws.amazon.com/vpn/client-vpn-download/) and install the latest software for AWS Client VPN.
 
-Run the following command (ask the platform team for the ENDPOINT ID. The "ENV" variable is the envrionemt you're trying to connect to (i.e. dev, staging, production). Note - if you haven't set up that profile using the steps earlier, this will not work.
+Run the following command (ask the platform team for the ENDPOINT ID. The "ENV" variable is the envrionemt you're trying to connect to (i.e. dev, preprod, production). Note - if you haven't set up that profile using the steps earlier, this will not work.
 
 ```
 $ aws ec2 export-client-vpn-client-configuration \
