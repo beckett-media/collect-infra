@@ -54,10 +54,6 @@
       }
     ]
   },
-  "hosted-zone:account=807430335579:domainName=beckettcollectstaging.com:region=us-east-1": {
-    "Id": "/hostedzone/Z05879422BJ1Z6QHSLJO9",
-    "Name": "beckettcollectstaging.com."
-  },
   "vpc-provider:account=438371105488:filter.vpc-id=vpc-0e9ba925154229a5a:region=us-east-1:returnAsymmetricSubnets=true": {
     "vpcId": "vpc-0e9ba925154229a5a",
     "vpcCidrBlock": "10.10.144.0/20",
@@ -116,5 +112,9 @@
   "hosted-zone:account=438371105488:domainName=collect-dev.beckett.com:region=us-east-1": {
     "Id": "/hostedzone/Z09341391HFIW2F8WVARQ",
     "Name": "collect-dev.beckett.com."
+  },
+  "hosted-zone:account=807430335579:domainName=collect-preprod.beckett.com:region=us-east-1": {
+    "Id": "/hostedzone/Z08218253CAY6BI4Q21AR",
+    "Name": "collect-preprod.beckett.com."
   }
 }
