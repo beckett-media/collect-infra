@@ -53,7 +53,7 @@ const environmentConfig = (environmentName: string): IEnvironmentConfig => {
       privateSubnetsIds: ["subnet-02aa7000875bb691f", "subnet-01710af3304eea65b"],
       privateSubnetsRtbIds: ["rtb-0ebfdeece6ab8d35c", "rtb-055c525d5c25731e6"],
     },
-    staging: {
+    preprod: {
       backup: true, // Whether or not the database and S3 buckets should be backed up with AWS Backup
       vpnServerCertificateArn: "", // See instructions in the readme in the VPN section
       vpnClientCertificateArn: "", // See instructions in the readme in the VPN section
