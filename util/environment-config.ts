@@ -2,6 +2,7 @@ export interface IEnvironmentConfig {
   readonly backup?: boolean;
   readonly vpnServerCertificateArn?: string;
   readonly vpnClientCertificateArn?: string;
+  readonly vpnSubnetCidr?: string;
   readonly domainName: string;
   readonly rootAccountId: string;
   readonly collectApiHttpApiId: string;
@@ -22,6 +23,7 @@ const environmentConfig = (environmentName: string): IEnvironmentConfig => {
       backup?: boolean;
       vpnServerCertificateArn?: string;
       vpnClientCertificateArn?: string;
+      vpnSubnetCidr?: string;
       domainName: string;
       rootAccountId: string;
       collectApiHttpApiId: string;
@@ -40,6 +42,7 @@ const environmentConfig = (environmentName: string): IEnvironmentConfig => {
       backup: false,
       vpnServerCertificateArn: "",
       vpnClientCertificateArn: "",
+      vpnSubnetCidr: "10.212.134.0/24",
       domainName: "collect-dev.beckett.com",
       rootAccountId: "750497448356",
       collectApiHttpApiId: "",
@@ -57,6 +60,7 @@ const environmentConfig = (environmentName: string): IEnvironmentConfig => {
       backup: true, // Whether or not the database and S3 buckets should be backed up with AWS Backup
       vpnServerCertificateArn: "", // See instructions in the readme in the VPN section
       vpnClientCertificateArn: "", // See instructions in the readme in the VPN section
+      vpnSubnetCidr: "10.212.134.0/24",
       domainName: "collect-preprod.beckett.com", // The domain you register prior to deployment. See "Collect Frontend" in the README
       rootAccountId: "750497448356", // The root AWS account of which this account is part of
       collectApiHttpApiId: "", // The API Gateway id of the collect api, which is deployed seperately. Note: This CDK code must be deployed prior to the collect api service. After this is deployed, you can deploy the api, grab the id, put it here and redeploy
@@ -74,6 +78,7 @@ const environmentConfig = (environmentName: string): IEnvironmentConfig => {
       backup: true,
       vpnServerCertificateArn: "",
       vpnClientCertificateArn: "",
+      vpnSubnetCidr: "10.212.134.0/24",
       domainName: "collect.beckett.com",
       rootAccountId: "750497448356",
       collectApiHttpApiId: "",

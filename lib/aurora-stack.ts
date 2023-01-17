@@ -29,7 +29,7 @@ export class AuroraStack extends cdk.Stack {
     const clusterUser = "clusteradmin";
     const credentials = rds.Credentials.fromGeneratedSecret(clusterUser);
     const engine = rds.DatabaseClusterEngine.auroraPostgres({
-      version: rds.AuroraPostgresEngineVersion.VER_10_21,
+      version: rds.AuroraPostgresEngineVersion.VER_14_3,
     });
     const rdsParamGroup = new rds.ParameterGroup(this, "SlowQueryParamsGrp", {
       engine,
@@ -39,7 +39,6 @@ export class AuroraStack extends cdk.Stack {
         log_min_duration_statement: "1500",
       },
     });
-    // const defaultSecurityGroup = SecurityGroup.fromSecurityGroupId(this, "SG", vpc.vpcDefaultSecurityGroup);
 
     const clusterSecurityGroup = new ec2.SecurityGroup(
       this,
@@ -52,38 +51,34 @@ export class AuroraStack extends cdk.Stack {
       }
     );
 
-    // const defaultSecurityGroup = SecurityGroup.fromSecurityGroupId(
-    //   this,
-    //   "SG",
-    //   vpc.vpcDefaultSecurityGroup
-    // );
-
     const cluster = new rds.DatabaseCluster(this, "Database", {
       engine,
       credentials,
+      storageEncrypted: true,
       cloudwatchLogsExports: ["postgresql"],
       cloudwatchLogsRetention: logs.RetentionDays.THREE_DAYS,
       parameterGroup: rdsParamGroup,
       deletionProtection: stage === "production",
       instances: stage === "production" ? 3 : 2,
       instanceProps: {
-        autoMinorVersionUpgrade: true,
-        publiclyAccessible: process.env.STAGE === "dev",
-        securityGroups: [clusterSecurityGroup],
-        instanceType: ec2.InstanceType.of(
-          ec2.InstanceClass.BURSTABLE3,
-          stage === "production"
-            ? ec2.InstanceSize.LARGE
-            : ec2.InstanceSize.LARGE
-        ),
+        vpc,
         vpcSubnets: {
           subnets: privateSubnets
         },
-        vpc,
+        autoMinorVersionUpgrade: true,
+        publiclyAccessible: false,
+        securityGroups: [clusterSecurityGroup],
+        instanceType: new ec2.InstanceType('serverless'),
       },
     });
 
-    //
+    // escape hatch to finish setup aurora serverless v2
+    const clusterCfnConfig = cluster.node.findChild("Resource") as rds.CfnDBCluster
+    
+    clusterCfnConfig.serverlessV2ScalingConfiguration = {
+      minCapacity: 0.5,
+      maxCapacity: 4
+    }
 
     const proxy = cluster.addProxy(`${id}-rds-proxy`, {
       secrets: [cluster.secret!],
@@ -96,30 +91,17 @@ export class AuroraStack extends cdk.Stack {
       iamAuth: true,
     });
 
-    // Workaround for bug where TargetGroupName is not set but required
-    const targetGroup = proxy.node.children.find((child: any) => {
-      return child instanceof rds.CfnDBProxyTargetGroup;
-    }) as rds.CfnDBProxyTargetGroup;
-
     const role = new iam.Role(this, "DBProxyRole", {
       assumedBy: new iam.AccountPrincipal(this.account),
     });
 
-    if (stage === "dev") {
+    if (stage === "dev" && !!envConfig.vpnSubnetCidr) {
       clusterSecurityGroup.addIngressRule(
-        ec2.Peer.anyIpv4(),
+        ec2.Peer.ipv4(envConfig.vpnSubnetCidr!),
         ec2.Port.tcp(5432),
-        "Allow connection from anywhere"
+        "Allow connection from VPN"
       );
     }
-
-    // clusterSecurityGroup.addIngressRule(
-    //   ec2.Peer.securityGroupId(defaultSecurityGroup.securityGroupId),
-    //   ec2.Port.allTraffic(),
-    //   "postgres for default group"
-    // );
-
-    targetGroup.addPropertyOverride("TargetGroupName", "default");
 
     proxy.grantConnect(role, "clusteradmin"); // Grant the role connection access to the DB Proxy for database user 'clusteradmin'.
 
