@@ -35,7 +35,7 @@ export class S3UploadsStack extends cdk.Stack {
         defaultBehavior: {
           origin: new origins.S3Origin(userUploadBucket),
           cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
-          originRequestPolicy: cloudfront.OriginRequestPolicy.ALL_VIEWER,
+          originRequestPolicy: cloudfront.OriginRequestPolicy.CORS_S3_ORIGIN,
           responseHeadersPolicy:
             cloudfront.ResponseHeadersPolicy.CORS_ALLOW_ALL_ORIGINS,
         },
