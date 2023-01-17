@@ -27,6 +27,13 @@ export class S3UploadsStack extends cdk.Stack {
         {
           allowedMethods: [s3.HttpMethods.GET, s3.HttpMethods.HEAD],
           allowedOrigins: ["*"],
+          allowedHeaders: ["*"],
+          exposedHeaders: [
+            "x-amz-server-side-encryption",
+            "x-amz-request-id",
+            "x-amz-id-2",
+            "ETag",
+          ],
         },
       ],
       removalPolicy:
