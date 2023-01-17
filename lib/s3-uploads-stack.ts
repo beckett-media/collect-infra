@@ -23,6 +23,12 @@ export class S3UploadsStack extends cdk.Stack {
     const envConfig: IEnvironmentConfig = environmentConfig(stage);
 
     const userUploadBucket = new s3.Bucket(this, "userUploadBucket", {
+      cors: [
+        {
+          allowedMethods: [s3.HttpMethods.GET, s3.HttpMethods.HEAD],
+          allowedOrigins: ["*"],
+        },
+      ],
       removalPolicy:
         stage === "production"
           ? cdk.RemovalPolicy.RETAIN
