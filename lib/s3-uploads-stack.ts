@@ -32,7 +32,13 @@ export class S3UploadsStack extends cdk.Stack {
       this,
       "cloudfrontDistro",
       {
-        defaultBehavior: { origin: new origins.S3Origin(userUploadBucket) },
+        defaultBehavior: {
+          origin: new origins.S3Origin(userUploadBucket),
+          cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
+          originRequestPolicy: cloudfront.OriginRequestPolicy.ALL_VIEWER,
+          responseHeadersPolicy:
+            cloudfront.ResponseHeadersPolicy.CORS_ALLOW_ALL_ORIGINS,
+        },
       }
     );
 
