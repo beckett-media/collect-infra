@@ -22,6 +22,19 @@ export class S3UploadsStack extends cdk.Stack {
     const envConfig: IEnvironmentConfig = environmentConfig(stage);
 
     const userUploadBucket = new s3.Bucket(this, "userUploadBucket", {
+      cors: [
+        {
+          allowedMethods: [s3.HttpMethods.GET, s3.HttpMethods.HEAD],
+          allowedOrigins: ["*"],
+          allowedHeaders: ["*"],
+          exposedHeaders: [
+            "x-amz-server-side-encryption",
+            "x-amz-request-id",
+            "x-amz-id-2",
+            "ETag",
+          ],
+        },
+      ],
       removalPolicy:
         stage === "production"
           ? cdk.RemovalPolicy.RETAIN
@@ -34,7 +47,7 @@ export class S3UploadsStack extends cdk.Stack {
         defaultBehavior: {
           origin: new origins.S3Origin(userUploadBucket),
           cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
-          originRequestPolicy: cloudfront.OriginRequestPolicy.ALL_VIEWER,
+          originRequestPolicy: cloudfront.OriginRequestPolicy.CORS_S3_ORIGIN,
           responseHeadersPolicy:
             cloudfront.ResponseHeadersPolicy.CORS_ALLOW_ALL_ORIGINS,
         },
