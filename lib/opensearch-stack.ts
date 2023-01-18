@@ -4,11 +4,13 @@ import * as iam from "aws-cdk-lib/aws-iam";
 import { Domain, EngineVersion } from "aws-cdk-lib/aws-opensearchservice";
 import { Construct } from "constructs";
 import { BaseInfra } from "../lib/base-infra";
+import environmentConfig from "../util/environment-config";
 
 interface OpensearchStackProps extends cdk.StackProps {
   stage: "dev" | "preprod" | "production";
   bastionSecurityGroup: cdk.aws_ec2.SecurityGroup;
   lambdaSecurityGroup: cdk.aws_ec2.SecurityGroup;
+  wildcardSiteCertificate: cdk.aws_certificatemanager.Certificate;
 }
 
 export class OpensearchStack extends cdk.Stack {
@@ -17,11 +19,14 @@ export class OpensearchStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: OpensearchStackProps) {
     super(scope, id, props);
 
-    const { stage, bastionSecurityGroup, lambdaSecurityGroup } = props;
-
+    const { stage, bastionSecurityGroup, lambdaSecurityGroup, wildcardSiteCertificate } = props;
+    
+    const envConfig = environmentConfig(stage);
     const baseInfra = new BaseInfra(this, 'baseInfra', { stage: stage });
     const vpc = baseInfra.vpc
     const privateSubnets = baseInfra.privateSubnets
+    const hostedZone = baseInfra.hostedZone
+    const SEARCH_DOMAIN = `search.${envConfig.domainName}`;
 
     const opensearchSecurityGroup = new ec2.SecurityGroup(
       this,
@@ -39,7 +44,7 @@ export class OpensearchStack extends cdk.Stack {
       securityGroups: [opensearchSecurityGroup],
       vpcSubnets: [
         {
-          subnets: [privateSubnets[0]],
+          subnets: process.env.STAGE === "production" ? privateSubnets : [privateSubnets[0]],
         },
         // {
         //   subnetType: ec2.SubnetType.PRIVATE_WITH_NAT,
@@ -66,6 +71,11 @@ export class OpensearchStack extends cdk.Stack {
         appLogEnabled: true,
         slowIndexLogEnabled: true,
       },
+      customEndpoint: {
+        domainName: SEARCH_DOMAIN,
+        certificate: wildcardSiteCertificate,
+        hostedZone: hostedZone
+      }
     });
 
     new iam.CfnServiceLinkedRole(this, "Service Linked Role", {
@@ -82,6 +92,13 @@ export class OpensearchStack extends cdk.Stack {
       ec2.Port.allTraffic(),
       "global access to bastion group"
     );
+    if (stage !== "production" && !!envConfig.vpnSubnetCidr) {
+      opensearchSecurityGroup.addIngressRule(
+        ec2.Peer.ipv4(envConfig.vpnSubnetCidr),
+        ec2.Port.allTraffic(),
+        "Allow connection from VPN"
+      );
+    }
 
     if (process.env.STAGE === "dev") {
       opensearchDomain.addAccessPolicies(
@@ -95,9 +112,15 @@ export class OpensearchStack extends cdk.Stack {
     }
 
     new cdk.CfnOutput(this, "opensearchEndpoint", {
-      value: opensearchDomain.domainEndpoint,
+      value: `https://${SEARCH_DOMAIN}`,
       description: "The endpoint for the opensearch domain",
       exportName: "opensearchEndpoint",
+    });
+
+    new cdk.CfnOutput(this, "opensearchDashboard", {
+      value: `https://${SEARCH_DOMAIN}/_dashboards`,
+      description: "The dashboard URL for the opensearch domain",
+      exportName: "opensearchDashboard",
     });
 
     this.opensearchSecurityGroup = opensearchSecurityGroup;

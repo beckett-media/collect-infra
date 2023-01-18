@@ -96,7 +96,7 @@ export class AuroraStack extends cdk.Stack {
       assumedBy: new iam.AccountPrincipal(this.account),
     });
 
-    if (stage === "dev" && !!envConfig.vpnSubnetCidr) {
+    if (stage !== "production" && !!envConfig.vpnSubnetCidr) {
       clusterSecurityGroup.addIngressRule(
         ec2.Peer.ipv4(envConfig.vpnSubnetCidr!),
         ec2.Port.tcp(5432),
