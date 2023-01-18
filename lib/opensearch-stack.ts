@@ -117,7 +117,7 @@ export class OpensearchStack extends cdk.Stack {
       exportName: "opensearchEndpoint",
     });
 
-    new cdk.CfnOutput(this, "opensearchCustomEndpoint", {
+    new cdk.CfnOutput(this, "opensearchDashboard", {
       value: `https://${SEARCH_DOMAIN}/_dashboards`,
       description: "The dashboard URL for the opensearch domain",
       exportName: "opensearchDashboard",
