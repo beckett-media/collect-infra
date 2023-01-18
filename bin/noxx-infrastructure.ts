@@ -34,10 +34,15 @@ const envDetails = {
 //   stage,
 //   terminationProtection: stage === "production",
 // });
+const NoxxInfra = new NoxxInfrastructureStack(app, "CollectInfrastructureStack-"+stage, {
+  stage,
+  env: envDetails
+});
 const auroraStack = new AuroraStack(app, "CollectAuroraClusterStack-"+stage, {
   stage,
   terminationProtection: stage === "production",
-  env: envDetails
+  env: envDetails,
+  lambdaSecurityGroup: NoxxInfra.lambdaSecurityGroup
 });
 const bastionStack = new BastionStack(app, "CollectBastionStack-"+stage, {
   stage,
@@ -47,7 +52,8 @@ const bastionStack = new BastionStack(app, "CollectBastionStack-"+stage, {
 const elasticacheStack = new ElasticacheStack(app, "CollectElasticacheStack-"+stage, {
   stage,
   terminationProtection: stage === "production",
-  env: envDetails
+  env: envDetails,
+  lambdaSecurityGroup: NoxxInfra.lambdaSecurityGroup
 });
 const iamDeployUserStack = new IamDeployUserStack(app, "CollectIamDeployUserStack-"+stage, {
   stage,
@@ -58,7 +64,8 @@ const opensearchStack = new OpensearchStack(app, "CollectOpensearchStack-"+stage
   stage,
   bastionSecurityGroup: bastionStack.bastionSecurityGroup,
   terminationProtection: stage === "production",
-  env: envDetails
+  env: envDetails,
+  lambdaSecurityGroup: NoxxInfra.lambdaSecurityGroup
 });
 const s3UploadsStack = new S3UploadsStack(app, "CollectS3UploadsStack-"+stage, {
   stage,
@@ -108,8 +115,3 @@ const iamBackendDev = new IamBackendDevsStack(app, "CollectIamBackendDevsStack-"
 //       stage,
 //       vpc: vpcStack.vpc,
 //     });
-
-new NoxxInfrastructureStack(app, "CollectInfrastructureStack-"+stage, {
-  stage,
-  env: envDetails
-});

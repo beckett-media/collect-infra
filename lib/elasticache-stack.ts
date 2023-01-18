@@ -6,6 +6,7 @@ import { BaseInfra } from "../lib/base-infra";
 
 interface ElasticacheStackProps extends cdk.StackProps {
   stage: "dev" | "preprod" | "production";
+  lambdaSecurityGroup: cdk.aws_ec2.SecurityGroup;
 }
 
 export class ElasticacheStack extends cdk.Stack {
@@ -14,7 +15,7 @@ export class ElasticacheStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: ElasticacheStackProps) {
     super(scope, id, props);
 
-    const { stage } = props;
+    const { stage, lambdaSecurityGroup } = props;
 
     const baseInfra = new BaseInfra(this, 'baseInfra', { stage: stage });
     const vpc = baseInfra.vpc
@@ -55,11 +56,9 @@ export class ElasticacheStack extends cdk.Stack {
       }
     );
 
-    // const defaultSecurityGroup = SecurityGroup.fromSecurityGroupId(this, "SG", vpc.vpcDefaultSecurityGroup);
-
     redisCache.addDependsOn(redisSubnetGroup);
 
-    // redisSecurityGroup.addIngressRule(ec2.Peer.securityGroupId(defaultSecurityGroup.securityGroupId), ec2.Port.allTraffic(), 'global access to default group');
+    redisSecurityGroup.addIngressRule(ec2.Peer.securityGroupId(lambdaSecurityGroup.securityGroupId), ec2.Port.allTraffic(), 'global access to Lambda security group');
 
     new cdk.CfnOutput(this, `RedisCacheEndpointUrl`, {
       value: redisCache.attrRedisEndpointAddress,

@@ -10,6 +10,7 @@ import environmentConfig, { IEnvironmentConfig } from "../util/environment-confi
 
 interface AuroraStackProps extends cdk.StackProps {
   stage: "dev" | "preprod" | "production";
+  lambdaSecurityGroup: cdk.aws_ec2.SecurityGroup;
 }
 
 export class AuroraStack extends cdk.Stack {
@@ -19,7 +20,7 @@ export class AuroraStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: AuroraStackProps) {
     super(scope, id, props);
 
-    const { stage } = props;
+    const { stage, lambdaSecurityGroup } = props;
     const envConfig: IEnvironmentConfig = environmentConfig(stage);
 
     const baseInfra = new BaseInfra(this, 'baseInfra', { stage: stage });
@@ -102,6 +103,12 @@ export class AuroraStack extends cdk.Stack {
         "Allow connection from VPN"
       );
     }
+
+    clusterSecurityGroup.addIngressRule(
+      ec2.Peer.securityGroupId(lambdaSecurityGroup.securityGroupId),
+      ec2.Port.allTraffic(),
+      "postgres for Lambda security group"
+    );
 
     proxy.grantConnect(role, "clusteradmin"); // Grant the role connection access to the DB Proxy for database user 'clusteradmin'.
 
