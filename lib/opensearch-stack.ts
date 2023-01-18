@@ -8,6 +8,7 @@ import { BaseInfra } from "../lib/base-infra";
 interface OpensearchStackProps extends cdk.StackProps {
   stage: "dev" | "preprod" | "production";
   bastionSecurityGroup: cdk.aws_ec2.SecurityGroup;
+  lambdaSecurityGroup: cdk.aws_ec2.SecurityGroup;
 }
 
 export class OpensearchStack extends cdk.Stack {
@@ -16,7 +17,7 @@ export class OpensearchStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: OpensearchStackProps) {
     super(scope, id, props);
 
-    const { stage, bastionSecurityGroup } = props;
+    const { stage, bastionSecurityGroup, lambdaSecurityGroup } = props;
 
     const baseInfra = new BaseInfra(this, 'baseInfra', { stage: stage });
     const vpc = baseInfra.vpc
@@ -71,17 +72,11 @@ export class OpensearchStack extends cdk.Stack {
       awsServiceName: "es.amazonaws.com",
     });
 
-    // const defaultSecurityGroup = SecurityGroup.fromSecurityGroupId(
-    //   this,
-    //   "SG",
-    //   vpc.vpcDefaultSecurityGroup
-    // );
-
-    // opensearchSecurityGroup.addIngressRule(
-    //   ec2.Peer.securityGroupId(defaultSecurityGroup.securityGroupId),
-    //   ec2.Port.allTraffic(),
-    //   "global access to bastion group"
-    // );
+    opensearchSecurityGroup.addIngressRule(
+      ec2.Peer.securityGroupId(lambdaSecurityGroup.securityGroupId),
+      ec2.Port.allTraffic(),
+      "global access to lambda security group"
+    );
     opensearchSecurityGroup.addIngressRule(
       ec2.Peer.securityGroupId(bastionSecurityGroup.securityGroupId),
       ec2.Port.allTraffic(),

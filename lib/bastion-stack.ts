@@ -5,6 +5,7 @@ import { BaseInfra } from "../lib/base-infra";
 
 interface BastionStackProps extends cdk.StackProps {
   stage: "dev" | "preprod" | "production";
+  
 }
 
 export class BastionStack extends cdk.Stack {
@@ -38,7 +39,6 @@ export class BastionStack extends cdk.Stack {
     const createSshKeyCommand = 'ssh-keygen -t rsa -f noxx-key';
     const pushSshKeyCommand = `aws ec2-instance-connect send-ssh-public-key --region ${cdk.Aws.REGION} --instance-id ${bastionHostLinux.instanceId} --availability-zone ${bastionHostLinux.instanceAvailabilityZone} --instance-os-user ec2-user --ssh-public-key file://noxx-key.pub ${profile ? `--profile ${profile}` : ''}`;
     const sshCommand = `ssh -o "IdentitiesOnly=yes" -i noxx-key ec2-user@${bastionHostLinux.instancePublicDnsName}`;
-    // const defaultSecurityGroup = SecurityGroup.fromSecurityGroupId(this, "SG", vpc.vpcDefaultSecurityGroup);
 
     bastionSecurityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(22), 'SSH access');
             
