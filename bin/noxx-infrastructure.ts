@@ -65,7 +65,8 @@ const opensearchStack = new OpensearchStack(app, "CollectOpensearchStack-"+stage
   bastionSecurityGroup: bastionStack.bastionSecurityGroup,
   terminationProtection: stage === "production",
   env: envDetails,
-  lambdaSecurityGroup: NoxxInfra.lambdaSecurityGroup
+  lambdaSecurityGroup: NoxxInfra.lambdaSecurityGroup,
+  wildcardSiteCertificate: NoxxInfra.wildcardSiteCertificate
 });
 const s3UploadsStack = new S3UploadsStack(app, "CollectS3UploadsStack-"+stage, {
   stage,

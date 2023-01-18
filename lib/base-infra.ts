@@ -1,4 +1,5 @@
 import * as ec2 from "aws-cdk-lib/aws-ec2";
+import * as route53 from "aws-cdk-lib/aws-route53";
 import { Construct } from "constructs";
 import environmentConfig, {
   IEnvironmentConfig
@@ -12,6 +13,7 @@ export class BaseInfra extends Construct {
   public readonly vpc: ec2.IVpc;
   public readonly privateSubnets: ec2.ISubnet[] = [];
   public readonly publicSubnets: ec2.ISubnet[] = [];
+  public readonly hostedZone: route53.IHostedZone;
   
   constructor(scope: Construct, id: string, props: BaseInfraProps) {
     super(scope, id);
@@ -44,5 +46,9 @@ export class BaseInfra extends Construct {
         }
       ))
     })
+
+    this.hostedZone = route53.HostedZone.fromLookup(this, "Zone", {
+      domainName: envConfig.domainName,
+    });
   }
 }
