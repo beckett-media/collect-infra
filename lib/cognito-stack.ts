@@ -1,5 +1,4 @@
 import * as cdk from "aws-cdk-lib";
-import * as acm from "aws-cdk-lib/aws-certificatemanager";
 import * as route53 from "aws-cdk-lib/aws-route53";
 import * as ses from "aws-cdk-lib/aws-ses";
 
@@ -9,41 +8,30 @@ import * as targets from "aws-cdk-lib/aws-route53-targets";
 import { Duration } from "aws-cdk-lib";
 import { StringAttribute } from "aws-cdk-lib/aws-cognito";
 import { Construct } from "constructs";
+import { BaseInfra } from "../lib/base-infra";
 import environmentConfig from "../util/environment-config";
 
 interface CognitoStackProps extends cdk.StackProps {
   stage: "dev" | "preprod" | "production";
+  wildcardSiteCertificate: cdk.aws_certificatemanager.Certificate;
 }
 
 export class CognitoStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: CognitoStackProps) {
     super(scope, id, props);
 
-    const { stage } = props;
+    const { stage, wildcardSiteCertificate } = props;
     const envConfig = environmentConfig(stage);
+    const baseInfra = new BaseInfra(this, 'baseInfra', { stage: stage });
+    const hostedZone = baseInfra.hostedZone
+    
     const DOMAIN_NAME = envConfig.domainName;
     const SSO_DOMAIN = `sso.${DOMAIN_NAME}`;
     const MAIL_DOMAIN = `mail.${DOMAIN_NAME}`;
 
-    //TODO: This will need to change when building within Becket AWS
-    const zone = route53.HostedZone.fromLookup(this, "Zone", {
-      domainName: DOMAIN_NAME,
-    });
-
-    //TODO: This will need to change when building within Becket AWS
-    const siteCertificate = new acm.DnsValidatedCertificate(
-      this,
-      "SsoCertificate",
-      {
-        domainName: SSO_DOMAIN,
-        hostedZone: zone,
-        region: "us-east-1", //standard for acm certs
-      }
-    );
-
     const dn = new apigwv2.DomainName(this, "SsoDomainName", {
       domainName: SSO_DOMAIN,
-      certificate: siteCertificate,
+      certificate: wildcardSiteCertificate,
     });
 
     if (!!envConfig.ssoApiHttpApiId) {
@@ -69,7 +57,7 @@ export class CognitoStack extends cdk.Stack {
     }
 
     const identity = new ses.EmailIdentity(this, "Identity", {
-      identity: ses.Identity.publicHostedZone(zone),
+      identity: ses.Identity.publicHostedZone(hostedZone),
       mailFromDomain: MAIL_DOMAIN,
     });
 
@@ -161,8 +149,6 @@ export class CognitoStack extends cdk.Stack {
       },
     });
 
-    //TODO: This will need to change when building within Becket AWS
-
     new route53.ARecord(this, "SsoSiteRecord", {
       recordName: SSO_DOMAIN,
       target: route53.RecordTarget.fromAlias(
@@ -171,7 +157,7 @@ export class CognitoStack extends cdk.Stack {
           dn.regionalHostedZoneId
         )
       ),
-      zone,
+      zone: hostedZone,
     });
 
     new cdk.CfnOutput(this, "SsoDomain", {

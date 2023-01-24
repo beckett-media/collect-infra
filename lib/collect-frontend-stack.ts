@@ -1,4 +1,3 @@
-import * as acm from "aws-cdk-lib/aws-certificatemanager";
 import * as cloudfront from "aws-cdk-lib/aws-cloudfront";
 import * as route53 from "aws-cdk-lib/aws-route53";
 import * as targets from "aws-cdk-lib/aws-route53-targets";
@@ -6,26 +5,27 @@ import * as s3 from "aws-cdk-lib/aws-s3";
 
 import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
+import { BaseInfra } from "../lib/base-infra";
 import environmentConfig, {
   IEnvironmentConfig
 } from "../util/environment-config";
 
 interface CollectFrontendStackProps extends cdk.StackProps {
   stage: "dev" | "preprod" | "production";
+  wildcardSiteCertificate: cdk.aws_certificatemanager.Certificate;
 }
 
 export class CollectFrontendStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: CollectFrontendStackProps) {
     super(scope, id, props);
 
-    const { stage } = props;
+    const { stage, wildcardSiteCertificate } = props;
     const envConfig: IEnvironmentConfig = environmentConfig(stage);
+    const baseInfra = new BaseInfra(this, 'baseInfra', { stage: stage });
+    const hostedZone = baseInfra.hostedZone
+    
     const DOMAIN_NAME = envConfig.domainName;
     const WEB_APP_DOMAIN = `${DOMAIN_NAME}`;
-
-    const zone = route53.HostedZone.fromLookup(this, "Zone", {
-      domainName: DOMAIN_NAME,
-    });
 
     //Create S3 Bucket for our website
     const siteBucket = new s3.Bucket(this, "SiteBucket", {
@@ -35,19 +35,8 @@ export class CollectFrontendStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
-    //TODO: This will need to change when building within Becket AWS
-    const siteCertificate = new acm.DnsValidatedCertificate(
-      this,
-      "SiteCertificate",
-      {
-        domainName: WEB_APP_DOMAIN,
-        hostedZone: zone,
-        region: "us-east-1", //standard for acm certs
-      }
-    );
-
     const viewerCertificate = cloudfront.ViewerCertificate.fromAcmCertificate(
-      siteCertificate,
+      wildcardSiteCertificate,
       {
         sslMethod: cloudfront.SSLMethod.SNI,
         aliases: [WEB_APP_DOMAIN],
@@ -91,7 +80,7 @@ export class CollectFrontendStack extends cdk.Stack {
       target: route53.RecordTarget.fromAlias(
         new targets.CloudFrontTarget(siteDistribution)
       ),
-      zone,
+      zone: hostedZone,
     });
 
     new cdk.CfnOutput(this, "collectFrontEndBucketName", {
