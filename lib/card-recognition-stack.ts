@@ -1,17 +1,16 @@
-import * as acm from "aws-cdk-lib/aws-certificatemanager";
+import * as apigwv2 from "@aws-cdk/aws-apigatewayv2-alpha";
+import * as cdk from "aws-cdk-lib";
 import * as route53 from "aws-cdk-lib/aws-route53";
 import * as targets from "aws-cdk-lib/aws-route53-targets";
-
-import * as apigwv2 from "@aws-cdk/aws-apigatewayv2-alpha";
-
-import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
+import { BaseInfra } from "../lib/base-infra";
 import environmentConfig, {
-  IEnvironmentConfig,
+  IEnvironmentConfig
 } from "../util/environment-config";
 
 interface CardRecognitionApiStackProps extends cdk.StackProps {
   stage: "dev" | "preprod" | "production";
+  wildcardSiteCertificate: cdk.aws_certificatemanager.Certificate;
 }
 
 export class CardRecognitionApiStack extends cdk.Stack {
@@ -22,31 +21,17 @@ export class CardRecognitionApiStack extends cdk.Stack {
   ) {
     super(scope, id, props);
 
-    const { stage } = props;
+    const { stage, wildcardSiteCertificate } = props;
     const envConfig: IEnvironmentConfig = environmentConfig(stage);
+    const baseInfra = new BaseInfra(this, 'baseInfra', { stage: stage });
+    const hostedZone = baseInfra.hostedZone
+    
     const DOMAIN_NAME = envConfig.domainName;
     const API_DOMAIN = `recognition-api.${DOMAIN_NAME}`;
 
-    //TODO: This will need to change when building within Becket AWS
-    const zone = route53.HostedZone.fromLookup(this, "Zone", {
-      domainName: DOMAIN_NAME,
-    });
-
-    //TODO: This will need to change when building within Becket AWS
-    const siteCertificate = new acm.DnsValidatedCertificate(
-      this,
-      "ApiCertificate",
-      {
-        domainName: API_DOMAIN,
-        hostedZone: zone,
-        region: "us-east-1", //standard for acm certs
-      }
-    );
-
-    //TODO: This will need to change when building within Becket AWS
     const dn = new apigwv2.DomainName(this, "DN", {
       domainName: API_DOMAIN,
-      certificate: siteCertificate,
+      certificate: wildcardSiteCertificate,
     });
 
     if (!!envConfig.cardRecognitionApiHttpApiId) {
@@ -126,8 +111,6 @@ export class CardRecognitionApiStack extends cdk.Stack {
     // );
 
     //Create A Record Custom Domain to CloudFront CDN
-
-    //TODO: This will need to change when building within Becket AWS
     new route53.ARecord(this, "CardRecogntionSiteRecord", {
       recordName: API_DOMAIN,
       target: route53.RecordTarget.fromAlias(
@@ -136,7 +119,7 @@ export class CardRecognitionApiStack extends cdk.Stack {
           dn.regionalHostedZoneId
         )
       ),
-      zone,
+      zone: hostedZone,
     });
 
     new cdk.CfnOutput(this, "cardRecognitionApiDomain", {

@@ -17,7 +17,7 @@ import { OpensearchStack } from "../lib/opensearch-stack";
 import { S3StaticAssetsStack } from "../lib/s3-static-assets-stack";
 import { S3UploadsStack } from "../lib/s3-uploads-stack";
 import environmentConfig, {
-  IEnvironmentConfig,
+  IEnvironmentConfig
 } from "../util/environment-config";
 if (!process.env.STAGE) {
   throw new Error("You must pass STAGE as a variable to this script");
@@ -101,6 +101,7 @@ const s3StaticAssetsStack = new S3StaticAssetsStack(
     stage,
     terminationProtection: stage === "production",
     env: envDetails,
+    wildcardSiteCertificate: NoxxInfra.wildcardSiteCertificate,
   }
 );
 
@@ -116,6 +117,7 @@ const cwStack = new AwsCdkCloudWatchStack(
 const cognitoStack = new CognitoStack(app, `CollectAwsCognitoStack-${stage}`, {
   stage,
   env: envDetails,
+  wildcardSiteCertificate: NoxxInfra.wildcardSiteCertificate,
 });
 const backupStack = new BackupStack(app, `CollectAwsBackupStack-${stage}`, {
   stage,
@@ -127,11 +129,13 @@ const collectFrontEnd = new CollectFrontendStack(
   {
     stage,
     env: envDetails,
+    wildcardSiteCertificate: NoxxInfra.wildcardSiteCertificate,
   }
 );
 const collectApiStack = new CollectApiStack(app, `CollectApiStack-${stage}`, {
   stage,
   env: envDetails,
+  wildcardSiteCertificate: NoxxInfra.wildcardSiteCertificate,
 });
 const cardRecognitionApiStack = new CardRecognitionApiStack(
   app,
@@ -139,6 +143,7 @@ const cardRecognitionApiStack = new CardRecognitionApiStack(
   {
     stage,
     env: envDetails,
+    wildcardSiteCertificate: NoxxInfra.wildcardSiteCertificate,
   }
 );
 
