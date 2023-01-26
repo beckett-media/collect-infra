@@ -36,6 +36,7 @@
   },
   "dependencies": {
     "@aws-cdk/aws-apigatewayv2-alpha": "^2.51.1-alpha.0",
+    "aws-cdk-github-oidc": "^2.3.2",
     "aws-cdk-lib": "2.60.0",
     "cdk-dia": "^0.7.0",
     "constructs": "^10.0.0",
