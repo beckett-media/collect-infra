@@ -1,7 +1,6 @@
 import * as cdk from "aws-cdk-lib";
 import { Tags } from "aws-cdk-lib";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
-import * as iam from "aws-cdk-lib/aws-iam";
 import * as logs from "aws-cdk-lib/aws-logs";
 import * as rds from "aws-cdk-lib/aws-rds";
 import { Construct } from "constructs";
@@ -28,9 +27,8 @@ export class AuroraStack extends cdk.Stack {
     const privateSubnets = baseInfra.privateSubnets
 
     const clusterUser = "clusteradmin";
-    const credentials = rds.Credentials.fromGeneratedSecret(clusterUser);
     const engine = rds.DatabaseClusterEngine.auroraPostgres({
-      version: rds.AuroraPostgresEngineVersion.VER_14_3,
+      version: rds.AuroraPostgresEngineVersion.VER_14_5,
     });
     const rdsParamGroup = new rds.ParameterGroup(this, "SlowQueryParamsGrp", {
       engine,
@@ -52,26 +50,34 @@ export class AuroraStack extends cdk.Stack {
       }
     );
 
-    const cluster = new rds.DatabaseCluster(this, "Database", {
+    const instanceProps: rds.InstanceProps = {
+      vpc,
+      vpcSubnets: {
+        subnets: privateSubnets
+      },
+      autoMinorVersionUpgrade: true,
+      publiclyAccessible: false,
+      securityGroups: [clusterSecurityGroup],
+      instanceType: new ec2.InstanceType('serverless'),
+    }
+
+    const clusterProps: rds.DatabaseClusterFromSnapshotProps = {
       engine,
-      credentials,
       storageEncrypted: true,
       cloudwatchLogsExports: ["postgresql"],
       cloudwatchLogsRetention: logs.RetentionDays.THREE_DAYS,
       parameterGroup: rdsParamGroup,
       deletionProtection: stage === "production",
       instances: stage === "production" ? 3 : 2,
-      instanceProps: {
-        vpc,
-        vpcSubnets: {
-          subnets: privateSubnets
-        },
-        autoMinorVersionUpgrade: true,
-        publiclyAccessible: false,
-        securityGroups: [clusterSecurityGroup],
-        instanceType: new ec2.InstanceType('serverless'),
-      },
-    });
+      instanceProps,
+      credentials: rds.Credentials.fromGeneratedSecret(clusterUser),
+      snapshotIdentifier: envConfig.dbSnapshotId,
+    }
+
+    const cluster = envConfig.dbSnapshotId ?
+      new rds.DatabaseClusterFromSnapshot(this, "Database", clusterProps) :
+      new rds.DatabaseCluster(this, "Database", clusterProps)
+
 
     // escape hatch to finish setup aurora serverless v2
     const clusterCfnConfig = cluster.node.findChild("Resource") as rds.CfnDBCluster
@@ -92,10 +98,6 @@ export class AuroraStack extends cdk.Stack {
       iamAuth: true,
     });
 
-    const role = new iam.Role(this, "DBProxyRole", {
-      assumedBy: new iam.AccountPrincipal(this.account),
-    });
-
     if (stage !== "production" && !!envConfig.vpnSubnetCidr) {
       clusterSecurityGroup.addIngressRule(
         ec2.Peer.ipv4(envConfig.vpnSubnetCidr!),
@@ -109,8 +111,6 @@ export class AuroraStack extends cdk.Stack {
       ec2.Port.allTraffic(),
       "postgres for Lambda security group"
     );
-
-    proxy.grantConnect(role, "clusteradmin"); // Grant the role connection access to the DB Proxy for database user 'clusteradmin'.
 
     Tags.of(cluster).add("backup", envConfig.backup! ? "yes" : "no");
 

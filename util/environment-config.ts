@@ -16,6 +16,7 @@ export interface IEnvironmentConfig {
   readonly publicSubnetsRtbIds: string[];
   readonly privateSubnetsIds: string[];
   readonly privateSubnetsRtbIds: string[];
+  readonly dbSnapshotId: string;
 }
 
 const environmentConfig = (environmentName: string): IEnvironmentConfig => {
@@ -38,6 +39,7 @@ const environmentConfig = (environmentName: string): IEnvironmentConfig => {
       publicSubnetsRtbIds: string[];
       privateSubnetsIds: string[];
       privateSubnetsRtbIds: string[];
+      dbSnapshotId: string;
     };
   } = {
     dev: {
@@ -64,6 +66,7 @@ const environmentConfig = (environmentName: string): IEnvironmentConfig => {
         "subnet-01710af3304eea65b",
       ],
       privateSubnetsRtbIds: ["rtb-0ebfdeece6ab8d35c", "rtb-055c525d5c25731e6"],
+      dbSnapshotId: ""
     },
     preprod: {
       backup: true, // Whether or not the database and S3 buckets should be backed up with AWS Backup
@@ -90,6 +93,7 @@ const environmentConfig = (environmentName: string): IEnvironmentConfig => {
         "subnet-05ccd99ff68068fe7",
       ],
       privateSubnetsRtbIds: ["rtb-0f0d2e4a52538fd47", "rtb-0193067819ab5d157"],
+      dbSnapshotId: "collect-aurora-serverlessv2-base-snapshot-14-5"
     },
     production: {
       backup: true,
@@ -115,6 +119,7 @@ const environmentConfig = (environmentName: string): IEnvironmentConfig => {
         "subnet-0b2b877a705c8ca01",
       ],
       privateSubnetsRtbIds: ["rtb-0d61784f4d7c9a379", "rtb-080e473d7a8ca4f64"],
+      dbSnapshotId: ""
     },
   };
   return environmentMapper[environmentName];
