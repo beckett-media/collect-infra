@@ -1,6 +1,7 @@
 import * as cdk from "aws-cdk-lib";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as iam from "aws-cdk-lib/aws-iam";
+import { AccountRootPrincipal } from "aws-cdk-lib/aws-iam";
 import { Domain, EngineVersion } from "aws-cdk-lib/aws-opensearchservice";
 import { Construct } from "constructs";
 import { BaseInfra } from "../lib/base-infra";
@@ -100,27 +101,19 @@ export class OpensearchStack extends cdk.Stack {
       );
     }
 
-    if (process.env.STAGE === "dev") {
-      opensearchDomain.addAccessPolicies(
-        new iam.PolicyStatement({
-          effect: iam.Effect.ALLOW,
-          resources: ["*"],
-          actions: ["es:*"],
-          principals: [new iam.AnyPrincipal()],
-        })
-      );
-    }
+    opensearchDomain.addAccessPolicies(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        resources: [`${opensearchDomain.domainArn}/*`],
+        actions: ["es:*"],
+        principals: [new AccountRootPrincipal],
+      })
+    );
 
     new cdk.CfnOutput(this, "opensearchEndpoint", {
-      value: `https://${SEARCH_DOMAIN}`,
+      value: `${SEARCH_DOMAIN}`,
       description: "The endpoint for the opensearch domain",
       exportName: "opensearchEndpoint",
-    });
-
-    new cdk.CfnOutput(this, "opensearchDashboard", {
-      value: `https://${SEARCH_DOMAIN}/_dashboards`,
-      description: "The dashboard URL for the opensearch domain",
-      exportName: "opensearchDashboard",
     });
 
     this.opensearchSecurityGroup = opensearchSecurityGroup;
