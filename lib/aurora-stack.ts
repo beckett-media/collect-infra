@@ -98,6 +98,14 @@ export class AuroraStack extends cdk.Stack {
       iamAuth: true,
     });
 
+    const cfnProxyEndpoint = new rds.CfnDBProxyEndpoint(this, "cfnProxyEndpoint", {
+      dbProxyName: proxy.dbProxyName,
+      dbProxyEndpointName: `${proxy.dbProxyName}-read-only`,
+      vpcSubnetIds: vpc.selectSubnets({subnets: privateSubnets}).subnetIds,
+      targetRole: "READ_ONLY",
+      vpcSecurityGroupIds: [clusterSecurityGroup.securityGroupId]
+    });
+
     if (stage !== "production" && !!envConfig.vpnSubnetCidr) {
       clusterSecurityGroup.addIngressRule(
         ec2.Peer.ipv4(envConfig.vpnSubnetCidr!),
@@ -118,6 +126,12 @@ export class AuroraStack extends cdk.Stack {
       value: proxy.endpoint,
       description: "The proxy endpoint for the aurora cluster",
       exportName: "auroraProxyEndpoint",
+    });
+
+    new cdk.CfnOutput(this, "databaseProxyEndpointReadOnly", {
+      value: cfnProxyEndpoint.attrEndpoint,
+      description: "The ReadOnly proxy endpoint for the aurora cluster",
+      exportName: "auroraProxyEndpointReadOnly",
     });
 
     new cdk.CfnOutput(this, "databaseUser", {
