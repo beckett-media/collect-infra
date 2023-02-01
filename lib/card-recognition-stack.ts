@@ -10,7 +10,7 @@ import environmentConfig, {
 
 interface CardRecognitionApiStackProps extends cdk.StackProps {
   stage: "dev" | "preprod" | "production";
-  wildcardSiteCertificate: cdk.aws_certificatemanager.Certificate;
+  siteCertificate: cdk.aws_certificatemanager.Certificate;
 }
 
 export class CardRecognitionApiStack extends cdk.Stack {
@@ -21,7 +21,7 @@ export class CardRecognitionApiStack extends cdk.Stack {
   ) {
     super(scope, id, props);
 
-    const { stage, wildcardSiteCertificate } = props;
+    const { stage, siteCertificate } = props;
     const envConfig: IEnvironmentConfig = environmentConfig(stage);
     const baseInfra = new BaseInfra(this, 'baseInfra', { stage: stage });
     const hostedZone = baseInfra.hostedZone
@@ -31,7 +31,7 @@ export class CardRecognitionApiStack extends cdk.Stack {
 
     const dn = new apigwv2.DomainName(this, "DN", {
       domainName: API_DOMAIN,
-      certificate: wildcardSiteCertificate,
+      certificate: siteCertificate,
     });
 
     if (!!envConfig.cardRecognitionApiHttpApiId) {

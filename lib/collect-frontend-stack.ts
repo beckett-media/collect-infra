@@ -12,14 +12,14 @@ import environmentConfig, {
 
 interface CollectFrontendStackProps extends cdk.StackProps {
   stage: "dev" | "preprod" | "production";
-  wildcardSiteCertificate: cdk.aws_certificatemanager.Certificate;
+  siteCertificate: cdk.aws_certificatemanager.Certificate;
 }
 
 export class CollectFrontendStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: CollectFrontendStackProps) {
     super(scope, id, props);
 
-    const { stage, wildcardSiteCertificate } = props;
+    const { stage, siteCertificate } = props;
     const envConfig: IEnvironmentConfig = environmentConfig(stage);
     const baseInfra = new BaseInfra(this, 'baseInfra', { stage: stage });
     const hostedZone = baseInfra.hostedZone
@@ -36,7 +36,7 @@ export class CollectFrontendStack extends cdk.Stack {
     });
 
     const viewerCertificate = cloudfront.ViewerCertificate.fromAcmCertificate(
-      wildcardSiteCertificate,
+      siteCertificate,
       {
         sslMethod: cloudfront.SSLMethod.SNI,
         aliases: [WEB_APP_DOMAIN],

@@ -12,14 +12,14 @@ import environmentConfig, {
 
 interface CollectApiStackProps extends cdk.StackProps {
   stage: "dev" | "preprod" | "production";
-  wildcardSiteCertificate: cdk.aws_certificatemanager.Certificate;
+  siteCertificate: cdk.aws_certificatemanager.Certificate;
 }
 
 export class CollectApiStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: CollectApiStackProps) {
     super(scope, id, props);
 
-    const { stage, wildcardSiteCertificate } = props;
+    const { stage, siteCertificate } = props;
     const envConfig: IEnvironmentConfig = environmentConfig(stage);
     const baseInfra = new BaseInfra(this, 'baseInfra', { stage: stage });
     const hostedZone = baseInfra.hostedZone
@@ -29,7 +29,7 @@ export class CollectApiStack extends cdk.Stack {
 
     const dn = new apigwv2.DomainName(this, "DN", {
       domainName: API_DOMAIN,
-      certificate: wildcardSiteCertificate,
+      certificate: siteCertificate,
     });
 
     if (!!envConfig.collectApiHttpApiId) {

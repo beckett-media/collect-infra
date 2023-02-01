@@ -82,7 +82,7 @@ const opensearchStack = new OpensearchStack(
     terminationProtection: stage === "production",
     env: envDetails,
     lambdaSecurityGroup: NoxxInfra.lambdaSecurityGroup,
-    wildcardSiteCertificate: NoxxInfra.wildcardSiteCertificate,
+    siteCertificate: NoxxInfra.siteCertificate,
   }
 );
 const s3UploadsStack = new S3UploadsStack(
@@ -101,7 +101,7 @@ const s3StaticAssetsStack = new S3StaticAssetsStack(
     stage,
     terminationProtection: stage === "production",
     env: envDetails,
-    wildcardSiteCertificate: NoxxInfra.wildcardSiteCertificate,
+    siteCertificate: NoxxInfra.siteCertificate,
   }
 );
 
@@ -117,7 +117,7 @@ const cwStack = new AwsCdkCloudWatchStack(
 const cognitoStack = new CognitoStack(app, `CollectAwsCognitoStack-${stage}`, {
   stage,
   env: envDetails,
-  wildcardSiteCertificate: NoxxInfra.wildcardSiteCertificate,
+  siteCertificate: NoxxInfra.siteCertificate,
 });
 const backupStack = new BackupStack(app, `CollectAwsBackupStack-${stage}`, {
   stage,
@@ -129,13 +129,13 @@ const collectFrontEnd = new CollectFrontendStack(
   {
     stage,
     env: envDetails,
-    wildcardSiteCertificate: NoxxInfra.wildcardSiteCertificate,
+    siteCertificate: NoxxInfra.siteCertificate,
   }
 );
 const collectApiStack = new CollectApiStack(app, `CollectApiStack-${stage}`, {
   stage,
   env: envDetails,
-  wildcardSiteCertificate: NoxxInfra.wildcardSiteCertificate,
+  siteCertificate: NoxxInfra.siteCertificate,
 });
 const cardRecognitionApiStack = new CardRecognitionApiStack(
   app,
@@ -143,7 +143,7 @@ const cardRecognitionApiStack = new CardRecognitionApiStack(
   {
     stage,
     env: envDetails,
-    wildcardSiteCertificate: NoxxInfra.wildcardSiteCertificate,
+    siteCertificate: NoxxInfra.siteCertificate,
   }
 );
 

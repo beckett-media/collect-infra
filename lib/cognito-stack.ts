@@ -13,14 +13,14 @@ import environmentConfig from "../util/environment-config";
 
 interface CognitoStackProps extends cdk.StackProps {
   stage: "dev" | "preprod" | "production";
-  wildcardSiteCertificate: cdk.aws_certificatemanager.Certificate;
+  siteCertificate: cdk.aws_certificatemanager.Certificate;
 }
 
 export class CognitoStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: CognitoStackProps) {
     super(scope, id, props);
 
-    const { stage, wildcardSiteCertificate } = props;
+    const { stage, siteCertificate } = props;
     const envConfig = environmentConfig(stage);
     const baseInfra = new BaseInfra(this, 'baseInfra', { stage: stage });
     const hostedZone = baseInfra.hostedZone
@@ -31,7 +31,7 @@ export class CognitoStack extends cdk.Stack {
 
     const dn = new apigwv2.DomainName(this, "SsoDomainName", {
       domainName: SSO_DOMAIN,
-      certificate: wildcardSiteCertificate,
+      certificate: siteCertificate,
     });
 
     if (!!envConfig.ssoApiHttpApiId) {

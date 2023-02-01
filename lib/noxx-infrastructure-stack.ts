@@ -10,7 +10,7 @@ interface Props extends cdk.StackProps {
 }
 export class NoxxInfrastructureStack extends cdk.Stack {
   public readonly lambdaSecurityGroup: ec2.SecurityGroup;
-  public readonly wildcardSiteCertificate: acm.Certificate;
+  public readonly siteCertificate: acm.Certificate;
   
   constructor(scope: Construct, id: string, props: Props) {
     super(scope, id, props);
@@ -37,17 +37,18 @@ export class NoxxInfrastructureStack extends cdk.Stack {
 
     this.lambdaSecurityGroup = lambdaSecurityGroup;
 
-    const wildcardSiteCertificate = new acm.DnsValidatedCertificate(
+    const siteCertificate = new acm.DnsValidatedCertificate(
       this,
-      "wildcardCertificate",
+      "siteCertificate",
       {
         hostedZone,
         domainName: `*.${envConfig.domainName}`,
+        subjectAlternativeNames: [envConfig.domainName],
         region: "us-east-1", //standard for acm certs
       }
     );
 
-    this.wildcardSiteCertificate = wildcardSiteCertificate;
+    this.siteCertificate = siteCertificate;
 
     new cdk.CfnOutput(this, 'vpcPublicSubnets', {
       value: publicSubnets.map(sn => sn.subnetId).join(","),
@@ -72,12 +73,6 @@ export class NoxxInfrastructureStack extends cdk.Stack {
       value: [lambdaSecurityGroup].map(sg => sg.securityGroupId).join(","),
       description: 'The security groups for lambdas',
       exportName: 'lambdaSecurityGroupIds',
-    });
-
-    new cdk.CfnOutput(this, 'wildcardSiteCertificate', {
-      value: wildcardSiteCertificate.certificateArn,
-      description: `The wildcard site certificate for *.${envConfig.domainName}`,
-      exportName: 'wildcardSiteCertificateArn',
     });
   }
 }
