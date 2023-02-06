@@ -66,7 +66,7 @@ const environmentConfig = (environmentName: string): IEnvironmentConfig => {
         "subnet-01710af3304eea65b",
       ],
       privateSubnetsRtbIds: ["rtb-0ebfdeece6ab8d35c", "rtb-055c525d5c25731e6"],
-      dbSnapshotId: ""
+      dbSnapshotId: "collect-aurora-serverlessv2-base-snapshot-14-5"
     },
     preprod: {
       backup: true, // Whether or not the database and S3 buckets should be backed up with AWS Backup
@@ -119,7 +119,7 @@ const environmentConfig = (environmentName: string): IEnvironmentConfig => {
         "subnet-0b2b877a705c8ca01",
       ],
       privateSubnetsRtbIds: ["rtb-0d61784f4d7c9a379", "rtb-080e473d7a8ca4f64"],
-      dbSnapshotId: ""
+      dbSnapshotId: "collect-aurora-serverlessv2-base-snapshot-14-5"
     },
   };
   return environmentMapper[environmentName];
