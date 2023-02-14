@@ -11,7 +11,7 @@ interface OpensearchStackProps extends cdk.StackProps {
   stage: "dev" | "preprod" | "production";
   bastionSecurityGroup: cdk.aws_ec2.SecurityGroup;
   lambdaSecurityGroup: cdk.aws_ec2.SecurityGroup;
-  wildcardSiteCertificate: cdk.aws_certificatemanager.Certificate;
+  siteCertificate: cdk.aws_certificatemanager.Certificate;
 }
 
 export class OpensearchStack extends cdk.Stack {
@@ -20,7 +20,7 @@ export class OpensearchStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: OpensearchStackProps) {
     super(scope, id, props);
 
-    const { stage, bastionSecurityGroup, lambdaSecurityGroup, wildcardSiteCertificate } = props;
+    const { stage, bastionSecurityGroup, lambdaSecurityGroup, siteCertificate } = props;
     
     const envConfig = environmentConfig(stage);
     const baseInfra = new BaseInfra(this, 'baseInfra', { stage: stage });
@@ -74,9 +74,14 @@ export class OpensearchStack extends cdk.Stack {
       },
       customEndpoint: {
         domainName: SEARCH_DOMAIN,
-        certificate: wildcardSiteCertificate,
+        certificate: siteCertificate,
         hostedZone: hostedZone
-      }
+      },
+      nodeToNodeEncryption: true,
+      encryptionAtRest: {
+        enabled: true
+      },
+      enforceHttps: true
     });
 
     new iam.CfnServiceLinkedRole(this, "Service Linked Role", {

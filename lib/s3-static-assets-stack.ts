@@ -11,14 +11,14 @@ import environmentConfig from "../util/environment-config";
 
 interface S3StaticAssetsStackProps extends cdk.StackProps {
   stage: "dev" | "preprod" | "production";
-  wildcardSiteCertificate: cdk.aws_certificatemanager.Certificate;
+  siteCertificate: cdk.aws_certificatemanager.Certificate;
 }
 
 export class S3StaticAssetsStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: S3StaticAssetsStackProps) {
     super(scope, id, props);
 
-    const { stage, wildcardSiteCertificate } = props;
+    const { stage, siteCertificate } = props;
     const envConfig = environmentConfig(stage);
     const baseInfra = new BaseInfra(this, 'baseInfra', { stage: stage });
     const hostedZone = baseInfra.hostedZone
@@ -37,7 +37,7 @@ export class S3StaticAssetsStack extends cdk.Stack {
       this,
       "staticAssetsCF",
       {
-        certificate: wildcardSiteCertificate,
+        certificate: siteCertificate,
         defaultBehavior: { origin: new origins.S3Origin(staticAssetsBucket) },
         domainNames: [ASSET_DOMAIN],
       }
