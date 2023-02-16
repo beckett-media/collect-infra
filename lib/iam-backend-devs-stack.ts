@@ -20,6 +20,9 @@ export class IamBackendDevsStack extends cdk.Stack {
         "CloudWatchLogsReadOnlyAccess"
       ),
       iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonEC2ReadOnlyAccess"),
+      iam.ManagedPolicy.fromAwsManagedPolicyName(
+        "AmazonOpenSearchServiceReadOnlyAccess"
+      ),
     ];
 
     const role = new iam.Role(this, "backenddevs", {
