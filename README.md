@@ -14,35 +14,7 @@ The various [services that comprise the Noxx Platform](https://github.com/NoXX-T
 
 ## Access
 
-You'll need an AWS IAM user account in the root AWS account. And that user will need to be in the IAM group `platform-engineers`.
-
-Once that is done, you'll need to add a profile block to your `~/.aws/credentials` and `~/.aws/config` files that look like this
-
-### ~/.aws/credentials
-
-```
-[<PROFILE NAME>]
-role_arn=arn:aws:iam::xxxxxxx:role/OrganizationAccountAccessRole
-source_profile=<SOURCE PROFILE>
-region=us-east-1
-```
-
-### ~/.aws/config
-
-```
-[profile <PROFILE NAME>]
-role_arn=arn:aws:iam::xxxxxxx:role/OrganizationAccountAccessRole
-source_profile=<SOURCE PROFILE>
-region=us-east-1
-```
-
-In both cases, SOURCE PROFILE should reference the AWS IAM user in the root AWS account, like this:
-
-```
-[<SOURCE PROFILE>]
-aws_access_key_id=xxxxx
-aws_secret_access_key=xxxxxxx
-```
+TODO: This is outdated
 
 ## Deploying
 
@@ -54,9 +26,7 @@ Note - creating a new environment is not a necessary part of setup. If you are a
 
 ### Create a new AWS Sub Account
 
-Note: the profile you use must have `organizations:CreateAccount` permissions in the parent account
-
-`$ aws organizations create-account --email <env-name>@get-noxx.com --acount-name "infrastructure-<env-name>" --profile <profile>`
+TODO: this is outdated
 
 ### Get account number
 
@@ -66,48 +36,12 @@ Note: the profile you use must have `organizations:CreateAccount` permissions in
 
 `$ cdk bootstrap aws://<account-number>/us-east-1 --profile <profile>`
 
-## Collect Frontend
-
-If you are creating a new environment (or want to change the domain for an existing environment), you'll first have to purchase the domain from AWS and wait for it to be registered. Then add that domain name to `[environment-config.ts](util/environment-config.ts)`. NOTE: registering a domain through Amazon Route53 will automatically create a Hosted Zone, so there is no need to do that.
-
 ## Config File
 
 Please read `[environment-config.ts](util/environment-config.ts)` to see what the various parameters do.
 
-## VPN
-
-Very few people should need VPN access to the infrastructure resources. In fact, right now, the only use-case is to be able to establish connections to the Aurora cluster from the developers local machine for verifying data imports.
-
-Also, note, you do not need to setup this entire project to utilize the VPN that it creates. You'll just need to follow the Access section
-
-### Creating
-
-In order for the VPN Endpoint to be created, the environment-config.ts needs an ACM ARN. To get this information, [follow these steps](https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/client-authentication.html#mutual) under the "Mutual" section only and then move on to the next step here.
-
-### Using
-
-[Download](https://aws.amazon.com/vpn/client-vpn-download/) and install the latest software for AWS Client VPN.
-
-Run the following command (ask the platform team for the ENDPOINT ID. The "ENV" variable is the envrionemt you're trying to connect to (i.e. dev, preprod, production). Note - if you haven't set up that profile using the steps earlier, this will not work.
-
-```
-$ aws ec2 export-client-vpn-client-configuration \
---client-vpn-endpoint-id "cvpn-endpoint-<ENDPOINT ID>" \
---output text > myclientconfig.ovpn --profile noxx-<ENV>
-```
-
-Because our AWS Client VPN endpoint uses mutual authentication, you must add the client certificate and the client private key to the configuration file that you download. To do this, open the configuration file using a text editor and add the following lines to the end of the file, providing the path to the client certificate and key that was created earlier.
-
-```
-cert /<PATH>/client1.domain.tld.crt
-key /<PATH>/client1.domain.tld.key
-```
-
-You'll need to request the `.crt` and `.key` from someone on the platform team. PATH is where you choose to store them.
-
 ## Overview
 
-- [Timeline and Goals](https://docs.google.com/spreadsheets/d/11EZpMwBINrwbvLawncP47e5jE4AiuK7G1mOnHFt0rGw/edit#gid=0)
 - Diagram
   ![Diagram](Noxx%20Global%20Infrastructure%202.0.drawio.png)
 - [Database Schema](https://dbdiagram.io/d/631f938d0911f91ba591ff92)
