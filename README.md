@@ -4,17 +4,33 @@ Hey there. This repo houses the code that builds the Noxx Global Infrastructure.
 
 The various [services that comprise the Noxx Platform](https://github.com/NoXX-Technologies/docs/blob/main/developers/services/README.md) hook into this infrastructure.
 
-## Install CDK
+## Setup
+
+[Make sure you have completed the onboarding necessary for your role(s)](https://github.com/beckett-media/docs/tree/main/onboarding)
+
+You'll need command-line access to this repo and git clone it.
+
+We suggest using `~/workspace/beckett` as the location in which to clone the project
+
+
+### AWS Access
+
+TODO: This is outdated
+
+
+### Install CDK
 
 `$ npm install -g aws-cdk`
 
-## Install TypeScript
+### Install TypeScript
 
 `$ npm install -g typescript`
 
-## Access
 
-TODO: This is outdated
+
+### Install Project Dependencies
+
+`$ yarn install # from project root`
 
 ## Deploying
 
