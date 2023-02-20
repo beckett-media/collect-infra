@@ -47,7 +47,8 @@ export class ElasticacheStack extends cdk.Stack {
       {
         engine: "redis",
         cacheNodeType: "cache.t3.micro",
-        numCacheNodes: stage === "production" ? 3 : 1,
+        numCacheNodes: 1, //#TODO review for production
+        // numCacheNodes: stage === "production" ? 3 : 1, if engine = redis, numcachenodes should be 1!
         clusterName: "elasticache-cluster",
         vpcSecurityGroupIds: [redisSecurityGroup.securityGroupId],
         cacheSubnetGroupName: redisSubnetGroup.ref,
