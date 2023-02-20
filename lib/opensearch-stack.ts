@@ -95,6 +95,23 @@ export class OpensearchStack extends cdk.Stack {
       enforceHttps: true,
     });
 
+    const localOpenSearchIamUser = new iam.User(
+      this,
+      "localOpenSearchIamUser",
+      {
+        userName: "localOpenSearch",
+        managedPolicies: [
+          iam.ManagedPolicy.fromAwsManagedPolicyName(
+            "AmazonOpenSearchServiceFullAccess"
+          ),
+        ],
+      }
+    );
+
+    const accessKey = new iam.CfnAccessKey(this, "CfnAccessKey", {
+      userName: localOpenSearchIamUser.userName,
+    });
+
     new iam.CfnServiceLinkedRole(this, "Service Linked Role", {
       awsServiceName: "es.amazonaws.com",
     });
@@ -130,6 +147,13 @@ export class OpensearchStack extends cdk.Stack {
       value: `${SEARCH_DOMAIN}`,
       description: "The endpoint for the opensearch domain",
       exportName: "opensearchEndpoint",
+    });
+
+    new cdk.CfnOutput(this, "localOpenSearchAccessKeyId", {
+      value: accessKey.ref,
+    });
+    new cdk.CfnOutput(this, "localOpenSearchAccessKey", {
+      value: accessKey.attrSecretAccessKey,
     });
 
     this.opensearchSecurityGroup = opensearchSecurityGroup;
