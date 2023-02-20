@@ -24,14 +24,17 @@ export class BaseInfra extends Construct {
     this.vpc = ec2.Vpc.fromLookup(this, "vpc", {
       vpcId: envConfig.vpcId,
     });
-
+    //opensearch construct requires AZs to be added when fetchin subnets from existing vpc
+    //TODO review & revise in the future
+    const azs = ["us-east-1a", "us-east-1b"] 
     envConfig.publicSubnetsIds.forEach((subnetId, index) => {
       this.publicSubnets.push(ec2.Subnet.fromSubnetAttributes(
         this,
         "publicSubnet"+index,
         {
           subnetId: subnetId,
-          routeTableId: envConfig.publicSubnetsRtbIds[index]
+          routeTableId: envConfig.publicSubnetsRtbIds[index],
+          availabilityZone: azs[index]
         }
       ))
     })
@@ -42,7 +45,8 @@ export class BaseInfra extends Construct {
         "privateSubnet"+index,
         {
           subnetId: subnetId,
-          routeTableId: envConfig.privateSubnetsRtbIds[index]
+          routeTableId: envConfig.privateSubnetsRtbIds[index],
+          availabilityZone: azs[index]
         }
       ))
     })

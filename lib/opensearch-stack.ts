@@ -50,14 +50,8 @@ export class OpensearchStack extends cdk.Stack {
       securityGroups: [opensearchSecurityGroup],
       vpcSubnets: [
         {
-          subnets:
-            process.env.STAGE === "production"
-              ? privateSubnets
-              : [privateSubnets[0]],
+          subnets: process.env.STAGE === "production" ? privateSubnets : [privateSubnets[0]],
         },
-        // {
-        //   subnetType: ec2.SubnetType.PRIVATE_WITH_NAT,
-        // }
       ],
       capacity: {
         ...(process.env.STAGE === "production"
