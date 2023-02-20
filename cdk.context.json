@@ -116,5 +116,64 @@
   "hosted-zone:account=807430335579:domainName=collect-preprod.beckett.com:region=us-east-1": {
     "Id": "/hostedzone/Z08218253CAY6BI4Q21AR",
     "Name": "collect-preprod.beckett.com."
+  },
+  "vpc-provider:account=796687042250:filter.vpc-id=vpc-0bc8ded0b6104e9f4:region=us-east-1:returnAsymmetricSubnets=true": {
+    "vpcId": "vpc-0bc8ded0b6104e9f4",
+    "vpcCidrBlock": "10.10.176.0/20",
+    "availabilityZones": [],
+    "subnetGroups": [
+      {
+        "name": "Isolated",
+        "type": "Isolated",
+        "subnets": [
+          {
+            "subnetId": "subnet-05c8ccf0e6fac2772",
+            "cidr": "10.10.184.0/23",
+            "availabilityZone": "us-east-1a",
+            "routeTableId": "rtb-0a8b4986f0121e377"
+          },
+          {
+            "subnetId": "subnet-0109e5779cb86ddaa",
+            "cidr": "10.10.180.0/23",
+            "availabilityZone": "us-east-1a",
+            "routeTableId": "rtb-0d61784f4d7c9a379"
+          },
+          {
+            "subnetId": "subnet-0b2b877a705c8ca01",
+            "cidr": "10.10.182.0/23",
+            "availabilityZone": "us-east-1b",
+            "routeTableId": "rtb-080e473d7a8ca4f64"
+          },
+          {
+            "subnetId": "subnet-08e0ac81716af6666",
+            "cidr": "10.10.186.0/23",
+            "availabilityZone": "us-east-1b",
+            "routeTableId": "rtb-0005149287c40751c"
+          }
+        ]
+      },
+      {
+        "name": "Public",
+        "type": "Public",
+        "subnets": [
+          {
+            "subnetId": "subnet-0caff20fea9ae9e82",
+            "cidr": "10.10.176.0/23",
+            "availabilityZone": "us-east-1a",
+            "routeTableId": "rtb-02d9a54fd96d06378"
+          },
+          {
+            "subnetId": "subnet-0d948079c31a3a56c",
+            "cidr": "10.10.178.0/23",
+            "availabilityZone": "us-east-1b",
+            "routeTableId": "rtb-041f584a57c4f9a82"
+          }
+        ]
+      }
+    ]
+  },
+  "hosted-zone:account=796687042250:domainName=collect.beckett.com:region=us-east-1": {
+    "Id": "/hostedzone/Z0485105CLO8DGMFB8MJ",
+    "Name": "collect.beckett.com."
   }
 }
