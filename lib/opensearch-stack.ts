@@ -56,12 +56,12 @@ export class OpensearchStack extends cdk.Stack {
       capacity: {
         ...(process.env.STAGE === "production"
           ? {
-              masterNodes: 1,
-              masterNodeInstanceType: "i3.large.search",
+              masterNodes: 3, // 3 or 5 is acceptable, see documentation
+              masterNodeInstanceType: "m5.large.search" // to be reviewed and adjusted based on metrics,
             }
           : {}),
         dataNodes: process.env.STAGE === "production" ? 2 : 1,
-        dataNodeInstanceType: "i3.large.search", //TODO: process.env.STAGE === "production" ? "m5.large.search" : "m5.large.search",
+        dataNodeInstanceType: "i3.large.search",
       },
       ebs: {
         // volumeSize: 100,
