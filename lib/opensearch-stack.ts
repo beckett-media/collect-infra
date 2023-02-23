@@ -50,24 +50,18 @@ export class OpensearchStack extends cdk.Stack {
       securityGroups: [opensearchSecurityGroup],
       vpcSubnets: [
         {
-          subnets:
-            process.env.STAGE === "production"
-              ? privateSubnets
-              : [privateSubnets[0]],
+          subnets: process.env.STAGE === "production" ? privateSubnets : [privateSubnets[0]],
         },
-        // {
-        //   subnetType: ec2.SubnetType.PRIVATE_WITH_NAT,
-        // }
       ],
       capacity: {
         ...(process.env.STAGE === "production"
           ? {
-              masterNodes: 1,
-              masterNodeInstanceType: "i3.large.search",
+              masterNodes: 3, // 3 or 5 is acceptable, see documentation
+              masterNodeInstanceType: "m5.large.search" // to be reviewed and adjusted based on metrics,
             }
           : {}),
         dataNodes: process.env.STAGE === "production" ? 2 : 1,
-        dataNodeInstanceType: "i3.large.search", //TODO: process.env.STAGE === "production" ? "m5.large.search" : "m5.large.search",
+        dataNodeInstanceType: "i3.large.search",
       },
       ebs: {
         // volumeSize: 100,
@@ -93,6 +87,23 @@ export class OpensearchStack extends cdk.Stack {
         enabled: true,
       },
       enforceHttps: true,
+    });
+
+    const localOpenSearchIamUser = new iam.User(
+      this,
+      "localOpenSearchIamUser",
+      {
+        userName: "localOpenSearch",
+        managedPolicies: [
+          iam.ManagedPolicy.fromAwsManagedPolicyName(
+            "AmazonOpenSearchServiceFullAccess"
+          ),
+        ],
+      }
+    );
+
+    const accessKey = new iam.CfnAccessKey(this, "CfnAccessKey", {
+      userName: localOpenSearchIamUser.userName,
     });
 
     new iam.CfnServiceLinkedRole(this, "Service Linked Role", {
@@ -130,6 +141,13 @@ export class OpensearchStack extends cdk.Stack {
       value: `${SEARCH_DOMAIN}`,
       description: "The endpoint for the opensearch domain",
       exportName: "opensearchEndpoint",
+    });
+
+    new cdk.CfnOutput(this, "localOpenSearchAccessKeyId", {
+      value: accessKey.ref,
+    });
+    new cdk.CfnOutput(this, "localOpenSearchAccessKey", {
+      value: accessKey.attrSecretAccessKey,
     });
 
     this.opensearchSecurityGroup = opensearchSecurityGroup;

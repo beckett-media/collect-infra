@@ -14,15 +14,42 @@ export class IamBackendDevsStack extends cdk.Stack {
     const { stage } = props;
     const envConfig = environmentConfig(stage);
 
+    const managedPolicies = [
+      iam.ManagedPolicy.fromAwsManagedPolicyName("EC2InstanceConnect"),
+      iam.ManagedPolicy.fromAwsManagedPolicyName(
+        "CloudWatchLogsReadOnlyAccess"
+      ),
+      iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonEC2ReadOnlyAccess"),
+      iam.ManagedPolicy.fromAwsManagedPolicyName(
+        "AmazonOpenSearchServiceReadOnlyAccess"
+      ),
+    ];
+
     const role = new iam.Role(this, "backenddevs", {
       assumedBy: new iam.AccountPrincipal(envConfig.rootAccountId),
       roleName: "BackendAccess",
-      managedPolicies: [
-        iam.ManagedPolicy.fromAwsManagedPolicyName("EC2InstanceConnect"),
-        iam.ManagedPolicy.fromAwsManagedPolicyName(
-          "CloudWatchLogsReadOnlyAccess"
-        ),
-      ],
+      managedPolicies,
+    });
+
+    const backendIamUser =
+      stage === "production"
+        ? null
+        : new iam.User(this, "localBackenduser", {
+            userName: "localBackenduser",
+            managedPolicies,
+          });
+
+    const accessKey = !backendIamUser
+      ? null
+      : new iam.CfnAccessKey(this, "CfnAccessKey", {
+          userName: backendIamUser.userName,
+        });
+
+    new cdk.CfnOutput(this, "backendDevAccessKeyId", {
+      value: !!accessKey ? accessKey.ref : "n/a",
+    });
+    new cdk.CfnOutput(this, "backendDevAccessKey", {
+      value: !!accessKey ? accessKey.attrSecretAccessKey : "n/a",
     });
 
     new cdk.CfnOutput(this, "backendDevRoleArn", { value: role.roleArn });

@@ -12,7 +12,7 @@ interface S3UploadsStackProps extends cdk.StackProps {
   stage: "dev" | "preprod" | "production";
 }
 
-//TODO: Consider adding a Beckett CNAME for CloudFront
+//TODO: Consider adding a CNAME for CloudFront
 
 export class S3UploadsStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: S3UploadsStackProps) {
