@@ -20,13 +20,18 @@ export class OpensearchStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: OpensearchStackProps) {
     super(scope, id, props);
 
-    const { stage, bastionSecurityGroup, lambdaSecurityGroup, siteCertificate } = props;
-    
+    const {
+      stage,
+      bastionSecurityGroup,
+      lambdaSecurityGroup,
+      siteCertificate,
+    } = props;
+
     const envConfig = environmentConfig(stage);
-    const baseInfra = new BaseInfra(this, 'baseInfra', { stage: stage });
-    const vpc = baseInfra.vpc
-    const privateSubnets = baseInfra.privateSubnets
-    const hostedZone = baseInfra.hostedZone
+    const baseInfra = new BaseInfra(this, "baseInfra", { stage: stage });
+    const vpc = baseInfra.vpc;
+    const privateSubnets = baseInfra.privateSubnets;
+    const hostedZone = baseInfra.hostedZone;
     const SEARCH_DOMAIN = `search.${envConfig.domainName}`;
 
     const opensearchSecurityGroup = new ec2.SecurityGroup(
@@ -47,20 +52,20 @@ export class OpensearchStack extends cdk.Stack {
         {
           subnets: process.env.STAGE === "production" ? privateSubnets : [privateSubnets[0]],
         },
-        // {
-        //   subnetType: ec2.SubnetType.PRIVATE_WITH_NAT,
-        // }
       ],
       capacity: {
-        // TODO: ...(process.env.STAGE === "production" ? {
-        //   masterNodes: 3,
-        //   masterNodeInstanceType: "m5.large.search"
-        // }: {}),
-        dataNodes: process.env.STAGE === "production" ? 4 : 1,
-        dataNodeInstanceType: "m5.large.search", //TODO: process.env.STAGE === "production" ? "m5.large.search" : "m5.large.search",
+        ...(process.env.STAGE === "production"
+          ? {
+              masterNodes: 3, // 3 or 5 is acceptable, see documentation
+              masterNodeInstanceType: "m5.large.search" // to be reviewed and adjusted based on metrics,
+            }
+          : {}),
+        dataNodes: process.env.STAGE === "production" ? 2 : 1,
+        dataNodeInstanceType: "i3.large.search",
       },
       ebs: {
-        volumeSize: 100,
+        // volumeSize: 100,
+        enabled: false,
       },
       vpc,
       zoneAwareness: {
@@ -75,13 +80,30 @@ export class OpensearchStack extends cdk.Stack {
       customEndpoint: {
         domainName: SEARCH_DOMAIN,
         certificate: siteCertificate,
-        hostedZone: hostedZone
+        hostedZone: hostedZone,
       },
       nodeToNodeEncryption: true,
       encryptionAtRest: {
-        enabled: true
+        enabled: true,
       },
-      enforceHttps: true
+      enforceHttps: true,
+    });
+
+    const localOpenSearchIamUser = new iam.User(
+      this,
+      "localOpenSearchIamUser",
+      {
+        userName: "localOpenSearch",
+        managedPolicies: [
+          iam.ManagedPolicy.fromAwsManagedPolicyName(
+            "AmazonOpenSearchServiceFullAccess"
+          ),
+        ],
+      }
+    );
+
+    const accessKey = new iam.CfnAccessKey(this, "CfnAccessKey", {
+      userName: localOpenSearchIamUser.userName,
     });
 
     new iam.CfnServiceLinkedRole(this, "Service Linked Role", {
@@ -111,7 +133,7 @@ export class OpensearchStack extends cdk.Stack {
         effect: iam.Effect.ALLOW,
         resources: [`${opensearchDomain.domainArn}/*`],
         actions: ["es:*"],
-        principals: [new AccountRootPrincipal],
+        principals: [new AccountRootPrincipal()],
       })
     );
 
@@ -119,6 +141,13 @@ export class OpensearchStack extends cdk.Stack {
       value: `${SEARCH_DOMAIN}`,
       description: "The endpoint for the opensearch domain",
       exportName: "opensearchEndpoint",
+    });
+
+    new cdk.CfnOutput(this, "localOpenSearchAccessKeyId", {
+      value: accessKey.ref,
+    });
+    new cdk.CfnOutput(this, "localOpenSearchAccessKey", {
+      value: accessKey.attrSecretAccessKey,
     });
 
     this.opensearchSecurityGroup = opensearchSecurityGroup;
