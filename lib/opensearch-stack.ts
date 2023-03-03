@@ -9,7 +9,7 @@ import environmentConfig from "../util/environment-config";
 
 interface OpensearchStackProps extends cdk.StackProps {
   stage: "dev" | "preprod" | "production";
-  bastionSecurityGroup: cdk.aws_ec2.SecurityGroup;
+  bastionSecurityGroup?: cdk.aws_ec2.SecurityGroup;
   lambdaSecurityGroup: cdk.aws_ec2.SecurityGroup;
   siteCertificate: cdk.aws_certificatemanager.Certificate;
 }
@@ -115,11 +115,13 @@ export class OpensearchStack extends cdk.Stack {
       ec2.Port.allTraffic(),
       "global access to lambda security group"
     );
-    opensearchSecurityGroup.addIngressRule(
-      ec2.Peer.securityGroupId(bastionSecurityGroup.securityGroupId),
-      ec2.Port.allTraffic(),
-      "global access to bastion group"
-    );
+    bastionSecurityGroup 
+      ? opensearchSecurityGroup.addIngressRule(
+          ec2.Peer.securityGroupId(bastionSecurityGroup?.securityGroupId),
+          ec2.Port.allTraffic(),
+          "global access to bastion group"
+        ) 
+      : null
     if (stage !== "production" && !!envConfig.vpnSubnetCidr) {
       opensearchSecurityGroup.addIngressRule(
         ec2.Peer.ipv4(envConfig.vpnSubnetCidr),
