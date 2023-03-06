@@ -8,6 +8,7 @@ export interface IEnvironmentConfig {
   readonly collectApiHttpApiId: string;
   readonly ssoApiHttpApiId: string;
   readonly cardRecognitionApiHttpApiId: string;
+  readonly binderApiHttpApiId: string;
   readonly isBeckett: boolean;
   readonly awsAccountId: string;
   readonly awsRegion: string;
@@ -31,6 +32,7 @@ const environmentConfig = (environmentName: string): IEnvironmentConfig => {
       collectApiHttpApiId: string;
       ssoApiHttpApiId: string;
       cardRecognitionApiHttpApiId: string;
+      binderApiHttpApiId: string;
       isBeckett: boolean;
       awsAccountId: string;
       awsRegion: string;
@@ -52,6 +54,7 @@ const environmentConfig = (environmentName: string): IEnvironmentConfig => {
       collectApiHttpApiId: "ouweed6w0g",
       ssoApiHttpApiId: "",
       cardRecognitionApiHttpApiId: "3zzb69nxq6",
+      binderApiHttpApiId: "85ke8885l4",
       isBeckett: true,
       awsAccountId: "438371105488",
       awsRegion: "us-east-1",
@@ -78,6 +81,7 @@ const environmentConfig = (environmentName: string): IEnvironmentConfig => {
       collectApiHttpApiId: "nooip5wjkf", // The API Gateway id of the collect api, which is deployed seperately. Note: This CDK code must be deployed prior to the collect api service. After this is deployed, you can deploy the api, grab the id, put it here and redeploy
       ssoApiHttpApiId: "mw1mkbzhuj", // The API Gateway id of the sso api, which is deployed seperately. Note: This CDK code must be deployed prior to the sso api service. After this is deployed, you can deploy SSO, grab the id, put it here and redeploy
       cardRecognitionApiHttpApiId: "3ggzuyfnk5", // The API Gateway id of the card recognition api, which is deployed seperately. Note: This CDK code must be deployed prior to the sso api service. After this is deployed, you can deploy SSO, grab the id, put it here and redeploy
+      binderApiHttpApiId: "0zj1z4ybv7",
       isBeckett: true, // Whether this environment is on a Beckett AWS account or a Noxx AWS account
       awsAccountId: "807430335579",
       awsRegion: "us-east-1",
@@ -104,6 +108,7 @@ const environmentConfig = (environmentName: string): IEnvironmentConfig => {
       collectApiHttpApiId: "",
       ssoApiHttpApiId: "",
       cardRecognitionApiHttpApiId: "7sjmpkoqu3",
+      binderApiHttpApiId: "skao0kvg8k",
       isBeckett: true,
       awsAccountId: "796687042250",
       awsRegion: "us-east-1",

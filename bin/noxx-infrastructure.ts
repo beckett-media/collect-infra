@@ -5,6 +5,7 @@ import { AuroraStack } from "../lib/aurora-stack";
 import { AwsCdkCloudWatchStack } from "../lib/aws-cdk-cloudwatch-stack";
 import { BackupStack } from "../lib/backup-stack";
 import { BastionStack } from "../lib/bastion-stack";
+import { BinderApiStack } from "../lib/binder-api-stack";
 import { CardRecognitionApiStack } from "../lib/card-recognition-stack";
 import { CognitoStack } from "../lib/cognito-stack";
 import { CollectApiStack } from "../lib/collect-api-stack";
@@ -141,6 +142,15 @@ const collectApiStack = new CollectApiStack(app, `CollectApiStack-${stage}`, {
 const cardRecognitionApiStack = new CardRecognitionApiStack(
   app,
   `CardRecognitionApiStack-${stage}`,
+  {
+    stage,
+    env: envDetails,
+    siteCertificate: NoxxInfra.siteCertificate,
+  }
+);
+const binderApiStack = new BinderApiStack(
+  app,
+  `BinderApiStack-${stage}`,
   {
     stage,
     env: envDetails,
