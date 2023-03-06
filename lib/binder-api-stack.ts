@@ -1,0 +1,131 @@
+import * as apigwv2 from "@aws-cdk/aws-apigatewayv2-alpha";
+import * as cdk from "aws-cdk-lib";
+import * as route53 from "aws-cdk-lib/aws-route53";
+import * as targets from "aws-cdk-lib/aws-route53-targets";
+import { Construct } from "constructs";
+import environmentConfig, {
+  IEnvironmentConfig
+} from "../util/environment-config";
+import { BaseInfra } from "./base-infra";
+
+interface BinderApiStackProps extends cdk.StackProps {
+  stage: "dev" | "preprod" | "production";
+  siteCertificate: cdk.aws_certificatemanager.Certificate;
+}
+
+export class BinderApiStack extends cdk.Stack {
+  constructor(
+    scope: Construct,
+    id: string,
+    props: BinderApiStackProps
+  ) {
+    super(scope, id, props);
+
+    const { stage, siteCertificate } = props;
+    const envConfig: IEnvironmentConfig = environmentConfig(stage);
+    const baseInfra = new BaseInfra(this, 'baseInfra', { stage: stage });
+    const hostedZone = baseInfra.hostedZone
+    
+    const DOMAIN_NAME = envConfig.domainName;
+    const API_DOMAIN = `binder-api.${DOMAIN_NAME}`;
+
+    const dn = new apigwv2.DomainName(this, "DN", {
+      domainName: API_DOMAIN,
+      certificate: siteCertificate,
+    });
+
+    if (!!envConfig.binderApiHttpApiId) {
+      // if the binder microservice has been set up, create a domain map to it
+
+      const api = apigwv2.HttpApi.fromHttpApiAttributes(
+        this,
+        "binder-api",
+        {
+          httpApiId: envConfig.binderApiHttpApiId,
+        }
+      );
+
+      const apiStage = apigwv2.HttpStage.fromHttpStageAttributes(
+        this,
+        "binder-api-stage",
+        {
+          api,
+          stageName: "$default",
+        }
+      );
+
+      const apiMapping = new apigwv2.ApiMapping(
+        this,
+        "BinderApiMapping",
+        {
+          api,
+          domainName: dn,
+          stage: apiStage,
+        }
+      );
+    }
+
+    // const viewerCertificate = cloudfront.ViewerCertificate.fromAcmCertificate(
+    //   siteCertificate,
+    //   {
+    //     sslMethod: cloudfront.SSLMethod.SNI,
+    //     aliases: [API_DOMAIN],
+    //     securityPolicy: cloudfront.SecurityPolicyProtocol.TLS_V1_2_2019,
+    //   }
+    // );
+
+    // //Create CloudFront Distribution
+    // const siteDistribution = new cloudfront.CloudFrontWebDistribution(
+    //   this,
+    //   "SiteDistribution",
+    //   {
+    //     // aliasConfiguration: {
+    //     //   acmCertRef: siteCertificateArn,
+    //     //   names: [API_DOMAIN],
+    //     //   securityPolicy: cloudfront.SecurityPolicyProtocol.TLS_V1_2_2019,
+    //     // },
+    //     // viewerCertificate: viewerCertificate,
+    //     viewerCertificate,
+    //     errorConfigurations: [
+    //       {
+    //         errorCode: 404,
+    //         responseCode: 200,
+    //         errorCachingMinTtl: 0,
+    //         responsePagePath: "/index.html",
+    //       },
+    //     ],
+    //     originConfigs: [
+    //       {
+    //         customOriginSource: {
+    //           domainName: siteBucket.bucketWebsiteDomainName,
+    //           originProtocolPolicy: cloudfront.OriginProtocolPolicy.HTTP_ONLY,
+    //         },
+    //         behaviors: [
+    //           {
+    //             isDefaultBehavior: true,
+    //           },
+    //         ],
+    //       },
+    //     ],
+    //   }
+    // );
+
+    //Create A Record Custom Domain to CloudFront CDN
+    new route53.ARecord(this, "BinderApiSiteRecord", {
+      recordName: API_DOMAIN,
+      target: route53.RecordTarget.fromAlias(
+        new targets.ApiGatewayv2DomainProperties(
+          dn.regionalDomainName,
+          dn.regionalHostedZoneId
+        )
+      ),
+      zone: hostedZone,
+    });
+
+    new cdk.CfnOutput(this, "binderApiDomain", {
+      value: API_DOMAIN,
+      description: "The domain for the collect api",
+      exportName: "binderApiDomain",
+    });
+  }
+}
