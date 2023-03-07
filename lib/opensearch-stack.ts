@@ -122,7 +122,8 @@ export class OpensearchStack extends cdk.Stack {
           "global access to bastion group"
         ) 
       : null
-    if (stage !== "production" && !!envConfig.vpnSubnetCidr) {
+    // if (stage !== "production" && !!envConfig.vpnSubnetCidr) {
+    if (!!envConfig.vpnSubnetCidr) {
       opensearchSecurityGroup.addIngressRule(
         ec2.Peer.ipv4(envConfig.vpnSubnetCidr),
         ec2.Port.allTraffic(),
