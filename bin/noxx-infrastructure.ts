@@ -44,18 +44,19 @@ const NoxxInfra = new NoxxInfrastructureStack(
     env: envDetails,
   }
 );
-const auroraStack = new AuroraStack(app, `CollectAuroraClusterStack-${stage}`, {
-  stage,
-  terminationProtection: stage === "production",
-  env: envDetails,
-  lambdaSecurityGroup: NoxxInfra.lambdaSecurityGroup,
-});
 const bastionStack = stage === "dev" 
   ? new BastionStack(app, `CollectBastionStack-${stage}`, {
     stage,
     env: envDetails,
     }) 
   : null
+const auroraStack = new AuroraStack(app, `CollectAuroraClusterStack-${stage}`, {
+  stage,
+  terminationProtection: stage === "production",
+  env: envDetails,
+  lambdaSecurityGroup: NoxxInfra.lambdaSecurityGroup,
+  bastionSecurityGroup: stage === "dev" ? bastionStack?.bastionSecurityGroup : undefined,
+});
 const elasticacheStack = new ElasticacheStack(
   app,
   `CollectElasticacheStack-${stage}`,

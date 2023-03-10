@@ -31,9 +31,13 @@ export class BastionStack extends cdk.Stack {
       vpc,
       securityGroup: bastionSecurityGroup,
       subnetSelection: {
-        subnetType: ec2.SubnetType.PUBLIC
+        subnets: publicSubnets,
       }
     });
+
+    const eip = new ec2.CfnEIP(this, "Ip", { instanceId: bastionHostLinux.instanceId });
+
+    bastionHostLinux.allowSshAccessFrom(ec2.Peer.anyIpv4())
 
     const profile = this.node.tryGetContext('profile');
     const createSshKeyCommand = 'ssh-keygen -t rsa -f noxx-key';
