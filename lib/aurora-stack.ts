@@ -1,5 +1,5 @@
 import * as cdk from "aws-cdk-lib";
-import { Tags } from "aws-cdk-lib";
+import { Duration, Tags } from "aws-cdk-lib";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as logs from "aws-cdk-lib/aws-logs";
 import * as rds from "aws-cdk-lib/aws-rds";
@@ -60,6 +60,7 @@ export class AuroraStack extends cdk.Stack {
       publiclyAccessible: false,
       securityGroups: [clusterSecurityGroup],
       instanceType: new ec2.InstanceType('serverless'),
+      enablePerformanceInsights: stage === "production" ? true : false
     }
 
     const clusterProps: rds.DatabaseClusterFromSnapshotProps = {
@@ -73,6 +74,7 @@ export class AuroraStack extends cdk.Stack {
       instanceProps,
       credentials: rds.Credentials.fromGeneratedSecret(clusterUser),
       snapshotIdentifier: envConfig.dbSnapshotId,
+      monitoringInterval: stage === "production" ? Duration.seconds(60) : undefined
     }
 
     const cluster = envConfig.dbSnapshotId ?
@@ -96,7 +98,7 @@ export class AuroraStack extends cdk.Stack {
         subnets: privateSubnets
       },
       securityGroups: [clusterSecurityGroup],
-      iamAuth: true,
+      iamAuth: true
     });
 
     const cfnProxyEndpoint = new rds.CfnDBProxyEndpoint(this, "cfnProxyEndpoint", {
