@@ -51,8 +51,8 @@ const environmentConfig = (environmentName: string): IEnvironmentConfig => {
       vpnSubnetCidr: "10.212.134.0/24",
       domainName: "collect-dev.beckett.com",
       rootAccountId: "750497448356",
-      collectApiHttpApiId: "ouweed6w0g",
-      ssoApiHttpApiId: "",
+      collectApiHttpApiId: "ohwdppwae7",
+      ssoApiHttpApiId: "72iy0srpy1",
       cardRecognitionApiHttpApiId: "3zzb69nxq6",
       binderApiHttpApiId: "85ke8885l4",
       isBeckett: true,
@@ -78,7 +78,7 @@ const environmentConfig = (environmentName: string): IEnvironmentConfig => {
       vpnSubnetCidr: "10.212.134.0/24",
       domainName: "collect-preprod.beckett.com", // The domain you register prior to deployment. See "Collect Frontend" in the README
       rootAccountId: "750497448356", // The root AWS account of which this account is part of
-      collectApiHttpApiId: "nooip5wjkf", // The API Gateway id of the collect api, which is deployed seperately. Note: This CDK code must be deployed prior to the collect api service. After this is deployed, you can deploy the api, grab the id, put it here and redeploy
+      collectApiHttpApiId: "j06hqkdtli", // The API Gateway id of the collect api, which is deployed seperately. Note: This CDK code must be deployed prior to the collect api service. After this is deployed, you can deploy the api, grab the id, put it here and redeploy
       ssoApiHttpApiId: "mw1mkbzhuj", // The API Gateway id of the sso api, which is deployed seperately. Note: This CDK code must be deployed prior to the sso api service. After this is deployed, you can deploy SSO, grab the id, put it here and redeploy
       cardRecognitionApiHttpApiId: "3ggzuyfnk5", // The API Gateway id of the card recognition api, which is deployed seperately. Note: This CDK code must be deployed prior to the sso api service. After this is deployed, you can deploy SSO, grab the id, put it here and redeploy
       binderApiHttpApiId: "0zj1z4ybv7",
@@ -105,7 +105,7 @@ const environmentConfig = (environmentName: string): IEnvironmentConfig => {
       vpnSubnetCidr: "10.212.134.0/24",
       domainName: "collect.beckett.com",
       rootAccountId: "750497448356",
-      collectApiHttpApiId: "enc9alk8c6", // The API Gateway id of the collect api, which is deployed seperately. Note: This CDK code must be deployed prior to the collect api service. After this is deployed, you can deploy the api, grab the id, put it here and redeploy
+      collectApiHttpApiId: "qfsvlr6tce", // The API Gateway id of the collect api, which is deployed seperately. Note: This CDK code must be deployed prior to the collect api service. After this is deployed, you can deploy the api, grab the id, put it here and redeploy
       ssoApiHttpApiId: "9oxhsamgjb", // The API Gateway id of the sso api, which is deployed seperately. Note: This CDK code must be deployed prior to the sso api service. After this is deployed, you can deploy SSO, grab the id, put it here and redeploy
       cardRecognitionApiHttpApiId: "7sjmpkoqu3",
       binderApiHttpApiId: "skao0kvg8k",
