@@ -7,6 +7,7 @@ import {
   StackProps,
 } from "aws-cdk-lib";
 import { Construct } from "constructs";
+import commonConfig from "../util/common-config";
 
 export class PipelineStack extends Stack {
   constructor(
@@ -69,10 +70,10 @@ export class PipelineStack extends Stack {
     const sourceAction =
       new aws_codepipeline_actions.CodeStarConnectionsSourceAction({
         actionName: "GetSource",
-        owner: "beckett-media",
-        repo: "collect-infra",
-        branch: "feature/cicd",
-        connectionArn: "arn:aws:codestar-connections:us-east-1:756244784198:connection/101fc724-1e5d-4e49-ae98-ef4e5e7dabc4",
+        owner: commonConfig.GitOwner,
+        repo: commonConfig.GitRepository,
+        branch: commonConfig.GitBranch,
+        connectionArn: commonConfig.GitConnectionArn,
         output: sourceOutput,
       });
 
@@ -127,7 +128,7 @@ export class PipelineStack extends Stack {
     });
 
     const pipeline = new aws_codepipeline.Pipeline(this, "pipeline", {
-      pipelineName: "CollectPipeline",
+      pipelineName: "CollectInfraPipeline",
       enableKeyRotation: true
     });
 
