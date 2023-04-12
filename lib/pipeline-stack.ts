@@ -119,7 +119,7 @@ export class PipelineStack extends Stack {
     });
 
     const pipeline = new aws_codepipeline.Pipeline(this, "pipeline", {
-      pipelineName: "collectPipeline",
+      pipelineName: "CollectPipeline",
       enableKeyRotation: true
     });
 
@@ -139,7 +139,7 @@ export class PipelineStack extends Stack {
     });
 
     pipeline.addStage({
-      stageName: "Approval",
+      stageName: "ApprovalPreprod",
       actions: [manualApprovalPreprod],
     });
 
@@ -149,7 +149,7 @@ export class PipelineStack extends Stack {
     });
 
     pipeline.addStage({
-      stageName: "Approval",
+      stageName: "ApprovalProd",
       actions: [manualApprovalProd],
     });
 
