@@ -1,0 +1,14 @@
+version: 0.2
+phases:
+  pre_build:
+    commands:
+      - npm install -g aws-cdk
+      - yarn install
+  build:
+    commands:
+      - STAGE=dev cdk diff --all
+      - STAGE=preprod cdk diff --all
+      - STAGE=production cdk diff --all   
+cache:
+  paths:
+    - "node_modules/**/*"
