@@ -87,7 +87,7 @@ export class AuroraStack extends cdk.Stack {
     
     clusterCfnConfig.serverlessV2ScalingConfiguration = {
       minCapacity: 0.5,
-      maxCapacity: 4
+      maxCapacity: stage === "dev" ? 16 : 32
     }
 
     const proxy = cluster.addProxy(`${id}-rds-proxy`, {
