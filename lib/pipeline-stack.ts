@@ -22,7 +22,7 @@ export class PipelineStack extends Stack {
       {
         projectName: "collect-diff",
         buildSpec: aws_codebuild.BuildSpec.fromSourceFilename(
-          "../buildspec/buildspec-diff.yaml"
+          "buildspec/buildspec-diff.yaml"
         ),
         environment: {
           computeType: aws_codebuild.ComputeType.MEDIUM,
@@ -38,7 +38,7 @@ export class PipelineStack extends Stack {
       {
         projectName: "collect-deploy",
         buildSpec: aws_codebuild.BuildSpec.fromSourceFilename(
-          "../buildspec/buildspec-deploy.yaml"
+          "buildspec/buildspec-deploy.yaml"
         ),
         environment: {
           computeType: aws_codebuild.ComputeType.MEDIUM,
@@ -49,6 +49,14 @@ export class PipelineStack extends Stack {
     );
 
     deployProject.addToRolePolicy(
+      new aws_iam.PolicyStatement({
+        effect: aws_iam.Effect.ALLOW,
+        actions: ["sts:AssumeRole"],
+        resources: ["*"],
+      })
+    );
+    
+    diffProject.addToRolePolicy(
       new aws_iam.PolicyStatement({
         effect: aws_iam.Effect.ALLOW,
         actions: ["sts:AssumeRole"],
