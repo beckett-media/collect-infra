@@ -15,6 +15,7 @@ import { IamBackendDevsStack } from "../lib/iam-backend-devs-stack";
 import { IamDeployUserStack } from "../lib/iam-deploy-user-stack";
 import { NoxxInfrastructureStack } from "../lib/noxx-infrastructure-stack";
 import { OpensearchStack } from "../lib/opensearch-stack";
+import { PipelineStack } from "../lib/pipeline-stack";
 import { S3StaticAssetsStack } from "../lib/s3-static-assets-stack";
 import { S3UploadsStack } from "../lib/s3-uploads-stack";
 import environmentConfig, {
@@ -32,10 +33,7 @@ const envDetails = {
   region: envConfig.awsRegion,
   account: envConfig.awsAccountId,
 };
-// const vpcStack = new VpcStack(app, "VpcStack", {
-//   stage,
-//   terminationProtection: stage === "production",
-// });
+
 const NoxxInfra = new NoxxInfrastructureStack(
   app,
   `CollectInfrastructureStack-${stage}`,
@@ -44,12 +42,14 @@ const NoxxInfra = new NoxxInfrastructureStack(
     env: envDetails,
   }
 );
+
 const bastionStack = stage === "dev" 
   ? new BastionStack(app, `CollectBastionStack-${stage}`, {
     stage,
     env: envDetails,
     }) 
   : null
+
 const auroraStack = new AuroraStack(app, `CollectAuroraClusterStack-${stage}`, {
   stage,
   terminationProtection: stage === "production",
@@ -57,6 +57,7 @@ const auroraStack = new AuroraStack(app, `CollectAuroraClusterStack-${stage}`, {
   lambdaSecurityGroup: NoxxInfra.lambdaSecurityGroup,
   bastionSecurityGroup: stage === "dev" ? bastionStack?.bastionSecurityGroup : undefined,
 });
+
 const elasticacheStack = new ElasticacheStack(
   app,
   `CollectElasticacheStack-${stage}`,
@@ -67,6 +68,7 @@ const elasticacheStack = new ElasticacheStack(
     lambdaSecurityGroup: NoxxInfra.lambdaSecurityGroup,
   }
 );
+
 const iamDeployUserStack = new IamDeployUserStack(
   app,
   `CollectIamDeployUserStack-${stage}`,
@@ -76,6 +78,7 @@ const iamDeployUserStack = new IamDeployUserStack(
     env: envDetails,
   }
 );
+
 const opensearchStack = new OpensearchStack(
   app,
   `CollectOpensearchStack-${stage}`,
@@ -88,6 +91,7 @@ const opensearchStack = new OpensearchStack(
     siteCertificate: NoxxInfra.siteCertificate,
   }
 );
+
 const s3UploadsStack = new S3UploadsStack(
   app,
   `CollectS3UploadsStack-${stage}`,
@@ -97,6 +101,7 @@ const s3UploadsStack = new S3UploadsStack(
     env: envDetails,
   }
 );
+
 const s3StaticAssetsStack = new S3StaticAssetsStack(
   app,
   `CollectS3StaticAssetsStack-${stage}`,
@@ -117,15 +122,18 @@ const cwStack = new AwsCdkCloudWatchStack(
     env: envDetails,
   }
 );
+
 const cognitoStack = new CognitoStack(app, `CollectAwsCognitoStack-${stage}`, {
   stage,
   env: envDetails,
   siteCertificate: NoxxInfra.siteCertificate,
 });
+
 const backupStack = new BackupStack(app, `CollectAwsBackupStack-${stage}`, {
   stage,
   env: envDetails,
 });
+
 const collectFrontEnd = new CollectFrontendStack(
   app,
   `CollectFrontendStack-${stage}`,
@@ -135,11 +143,13 @@ const collectFrontEnd = new CollectFrontendStack(
     siteCertificate: NoxxInfra.siteCertificate,
   }
 );
+
 const collectApiStack = new CollectApiStack(app, `CollectApiStack-${stage}`, {
   stage,
   env: envDetails,
   siteCertificate: NoxxInfra.siteCertificate,
 });
+
 const cardRecognitionApiStack = new CardRecognitionApiStack(
   app,
   `CardRecognitionApiStack-${stage}`,
@@ -149,6 +159,7 @@ const cardRecognitionApiStack = new CardRecognitionApiStack(
     siteCertificate: NoxxInfra.siteCertificate,
   }
 );
+
 const binderApiStack = new BinderApiStack(
   app,
   `BinderApiStack-${stage}`,
@@ -168,9 +179,13 @@ const iamBackendDev = new IamBackendDevsStack(
   }
 );
 
-// const vpnStack = !environmentConfig(stage).vpnServerCertificateArn
-//   ? null
-//   : new VpnStack(app, "VpnStack", {
-//       stage,
-//       vpc: vpcStack.vpc,
-//     });
+const pipelineStack = new PipelineStack(
+  app,
+  "CollectPipelineStack",
+  {
+    env: {
+      region: "us-east-1",
+      account: "756244784198",
+    },
+  }
+);
