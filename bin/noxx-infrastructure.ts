@@ -15,9 +15,6 @@ import { IamBackendDevsStack } from "../lib/iam-backend-devs-stack";
 import { IamDeployUserStack } from "../lib/iam-deploy-user-stack";
 import { NoxxInfrastructureStack } from "../lib/noxx-infrastructure-stack";
 import { OpensearchStack } from "../lib/opensearch-stack";
-import { ApiPipelineStack } from "../lib/pipeline-api-stack";
-import { FrontendPipelineStack } from "../lib/pipeline-frontend-stack";
-import { PipelineStack } from "../lib/pipeline-stack";
 import { S3StaticAssetsStack } from "../lib/s3-static-assets-stack";
 import { S3UploadsStack } from "../lib/s3-uploads-stack";
 import environmentConfig, {
@@ -181,37 +178,37 @@ const iamBackendDev = new IamBackendDevsStack(
   }
 );
 
-const pipelineStack = new PipelineStack(
-  app,
-  "CollectPipelineStack",
-  {
-    env: {
-      region: "us-east-1",
-      account: "756244784198",
-    },
-  }
-);
+// const pipelineStack = new PipelineStack(
+//   app,
+//   "CollectPipelineStack",
+//   {
+//     env: {
+//       region: "us-east-1",
+//       account: "756244784198",
+//     },
+//   }
+// );
 
-const pipelineApiStack = new ApiPipelineStack(
-  app,
-  `CollectApiPipelineStack-${stage}`,
-  { 
-    stage,
-    env: {
-      region: "us-east-1",
-      account: "756244784198",
-    },
-  }
-);
+// const pipelineApiStack = new ApiPipelineStack(
+//   app,
+//   `CollectApiPipelineStack-${stage}`,
+//   { 
+//     stage,
+//     env: {
+//       region: "us-east-1",
+//       account: "756244784198",
+//     },
+//   }
+// );
 
-const pipelineFrontendStack = new FrontendPipelineStack(
-  app,
-  `CollectFrontendPipelineStack-${stage}`,
-  { 
-    stage,
-    env: {
-      region: "us-east-1",
-      account: "756244784198",
-    },
-  }
-);
+// const pipelineFrontendStack = new FrontendPipelineStack(
+//   app,
+//   `CollectFrontendPipelineStack-${stage}`,
+//   { 
+//     stage,
+//     env: {
+//       region: "us-east-1",
+//       account: "756244784198",
+//     },
+//   }
+// );
