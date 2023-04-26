@@ -189,3 +189,27 @@ const pipelineStack = new PipelineStack(
     },
   }
 );
+
+// const pipelineApiStack = new ApiPipelineStack(
+//   app,
+//   `CollectApiPipelineStack-${stage}`,
+//   { 
+//     stage,
+//     env: {
+//       region: "us-east-1",
+//       account: "756244784198",
+//     },
+//   }
+// );
+
+// const pipelineFrontendStack = new FrontendPipelineStack(
+//   app,
+//   `CollectFrontendPipelineStack-${stage}`,
+//   { 
+//     stage,
+//     env: {
+//       region: "us-east-1",
+//       account: "756244784198",
+//     },
+//   }
+// );
