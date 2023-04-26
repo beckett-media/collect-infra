@@ -69,7 +69,7 @@ const environmentConfig = (environmentName: string): IEnvironmentConfig => {
         "subnet-01710af3304eea65b",
       ],
       privateSubnetsRtbIds: ["rtb-0ebfdeece6ab8d35c", "rtb-055c525d5c25731e6"],
-      dbSnapshotId: "collect-aurora-serverlessv2-base-snapshot-14-5",
+      dbSnapshotId: "collect-aurora-import-from-preprod-26-04-2023",
     },
     preprod: {
       backup: true, // Whether or not the database and S3 buckets should be backed up with AWS Backup
