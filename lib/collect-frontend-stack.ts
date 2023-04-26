@@ -88,6 +88,11 @@ export class CollectFrontendStack extends cdk.Stack {
       description: "The name for the site buckett",
     });
 
+    new cdk.CfnOutput(this, "collectFrontEndCfDistributionId", {
+      value: siteDistribution.distributionId,
+      description: "The CloudFront distribution ID",
+    });
+
     //Deploy site to s3
     // new deploy.BucketDeployment(this, "Deployment", {
     //   sources: [deploy.Source.asset("./build")],

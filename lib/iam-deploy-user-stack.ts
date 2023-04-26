@@ -40,6 +40,30 @@ export class IamDeployUserStack extends cdk.Stack {
       }
     );
 
+    const deployRole = new iam.Role(this, "deployRole", {
+      description: "This role allows cross-account deployment of collect repos",
+      roleName: "CollectDeployRole",
+      // assumedBy: new iam.ArnPrincipal("arn:aws:iam::756244784198:role/CollectApiPipelineStack-pipelineDeployProjectRole6-1X5P9KN9BE6GR"),
+      assumedBy: new iam.AccountPrincipal("756244784198"),
+      managedPolicies: [
+        iam.ManagedPolicy.fromAwsManagedPolicyName(
+          "AWSCloudFormationFullAccess"
+        ),
+        iam.ManagedPolicy.fromAwsManagedPolicyName("IAMFullAccess"),
+        iam.ManagedPolicy.fromAwsManagedPolicyName("AWSLambda_FullAccess"),
+        iam.ManagedPolicy.fromAwsManagedPolicyName(
+          "AmazonAPIGatewayAdministrator"
+        ),
+        iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonS3FullAccess"),
+        iam.ManagedPolicy.fromAwsManagedPolicyName(
+          "AmazonEC2ContainerRegistryFullAccess"
+        ),
+        iam.ManagedPolicy.fromAwsManagedPolicyName("AWSCodeDeployFullAccess"),
+        iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonSQSFullAccess"),
+        iam.ManagedPolicy.fromAwsManagedPolicyName("CloudFrontFullAccess"),
+      ],
+    })
+
     const user = new iam.User(this, "deployBotIamUser", {
       userName: "deployBot",
       managedPolicies: [
@@ -121,6 +145,10 @@ export class IamDeployUserStack extends cdk.Stack {
     new cdk.CfnOutput(this, "accessKeyId", { value: accessKey.ref });
     new cdk.CfnOutput(this, "secretAccessKey", {
       value: accessKey.attrSecretAccessKey,
+    });
+
+    new cdk.CfnOutput(this, "deployRoleArn", {
+      value: deployRole.roleArn,
     });
   }
 }
