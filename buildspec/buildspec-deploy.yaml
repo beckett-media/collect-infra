@@ -6,7 +6,7 @@ phases:
       - yarn install
   build:
     commands:
-      - cdk deploy --all 
+      - cdk deploy --all --require-approval never
 cache:
   paths:
     - "node_modules/**/*"
