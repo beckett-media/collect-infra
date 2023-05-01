@@ -17,6 +17,7 @@ import { NoxxInfrastructureStack } from "../lib/noxx-infrastructure-stack";
 import { OpensearchStack } from "../lib/opensearch-stack";
 import { S3StaticAssetsStack } from "../lib/s3-static-assets-stack";
 import { S3UploadsStack } from "../lib/s3-uploads-stack";
+import { WorkerStack } from "../lib/worker-stack";
 import environmentConfig, {
   IEnvironmentConfig
 } from "../util/environment-config";
@@ -49,12 +50,21 @@ const bastionStack = stage === "dev"
     }) 
   : null
 
+const workerStack = new WorkerStack(
+    app, `CollectWorkerStack-${stage}`, 
+    {
+      stage,
+      env: envDetails,
+    }
+  );
+
 const auroraStack = new AuroraStack(app, `CollectAuroraClusterStack-${stage}`, {
   stage,
   terminationProtection: stage === "production",
   env: envDetails,
   lambdaSecurityGroup: NoxxInfra.lambdaSecurityGroup,
   bastionSecurityGroup: stage === "dev" ? bastionStack?.bastionSecurityGroup : undefined,
+  workerSecurityGroup: workerStack.workerSecurityGroup
 });
 
 const elasticacheStack = new ElasticacheStack(
@@ -88,6 +98,7 @@ const opensearchStack = new OpensearchStack(
     env: envDetails,
     lambdaSecurityGroup: NoxxInfra.lambdaSecurityGroup,
     siteCertificate: NoxxInfra.siteCertificate,
+    workerSecurityGroup: workerStack.workerSecurityGroup
   }
 );
 

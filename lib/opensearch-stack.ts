@@ -12,6 +12,7 @@ interface OpensearchStackProps extends cdk.StackProps {
   bastionSecurityGroup?: cdk.aws_ec2.SecurityGroup;
   lambdaSecurityGroup: cdk.aws_ec2.SecurityGroup;
   siteCertificate: cdk.aws_certificatemanager.Certificate;
+  workerSecurityGroup?: cdk.aws_ec2.SecurityGroup;
 }
 
 export class OpensearchStack extends cdk.Stack {
@@ -25,6 +26,7 @@ export class OpensearchStack extends cdk.Stack {
       bastionSecurityGroup,
       lambdaSecurityGroup,
       siteCertificate,
+      workerSecurityGroup
     } = props;
 
     const envConfig = environmentConfig(stage);
@@ -120,6 +122,13 @@ export class OpensearchStack extends cdk.Stack {
           ec2.Peer.securityGroupId(bastionSecurityGroup?.securityGroupId),
           ec2.Port.allTraffic(),
           "global access to bastion group"
+        ) 
+      : null
+    workerSecurityGroup
+      ? opensearchSecurityGroup.addIngressRule(
+          ec2.Peer.securityGroupId(workerSecurityGroup?.securityGroupId),
+          ec2.Port.allTraffic(),
+          "global access from worker group"
         ) 
       : null
     // if (stage !== "production" && !!envConfig.vpnSubnetCidr) {

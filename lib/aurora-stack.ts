@@ -11,6 +11,7 @@ interface AuroraStackProps extends cdk.StackProps {
   stage: "dev" | "preprod" | "production";
   lambdaSecurityGroup: cdk.aws_ec2.SecurityGroup;
   bastionSecurityGroup?: cdk.aws_ec2.SecurityGroup;
+  workerSecurityGroup?: cdk.aws_ec2.SecurityGroup;
 }
 
 export class AuroraStack extends cdk.Stack {
@@ -20,7 +21,7 @@ export class AuroraStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: AuroraStackProps) {
     super(scope, id, props);
 
-    const { stage, lambdaSecurityGroup, bastionSecurityGroup } = props;
+    const { stage, lambdaSecurityGroup, bastionSecurityGroup, workerSecurityGroup } = props;
     const envConfig: IEnvironmentConfig = environmentConfig(stage);
 
     const baseInfra = new BaseInfra(this, 'baseInfra', { stage: stage });
@@ -129,6 +130,14 @@ export class AuroraStack extends cdk.Stack {
           ec2.Peer.securityGroupId(bastionSecurityGroup?.securityGroupId),
           ec2.Port.allTraffic(),
           "global access to bastion group"
+        ) 
+      : null
+    
+    workerSecurityGroup 
+      ? clusterSecurityGroup.addIngressRule(
+          ec2.Peer.securityGroupId(workerSecurityGroup?.securityGroupId),
+          ec2.Port.tcp(5432),
+          "global access from worker group"
         ) 
       : null
 
