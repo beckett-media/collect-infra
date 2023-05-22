@@ -2,6 +2,7 @@ import * as cdk from "aws-cdk-lib";
 import { Duration } from "aws-cdk-lib";
 import * as backup from "aws-cdk-lib/aws-backup";
 import { Schedule } from "aws-cdk-lib/aws-events";
+import * as iam from "aws-cdk-lib/aws-iam";
 import { Construct } from "constructs";
 
 interface BackupStackProps extends cdk.StackProps {
@@ -18,11 +19,30 @@ export class BackupStack extends cdk.Stack {
       this,
       "Plan"
     );
-    plan.addSelection("Selection", {
-      resources: [
-        backup.BackupResource.fromTag("backup", "yes"), // All resources that are tagged backup=yes
-      ],
+
+    const managedPolicies = [
+      iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSBackupServiceRolePolicyForBackup"),
+      iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSBackupServiceRolePolicyForRestores"),
+      iam.ManagedPolicy.fromAwsManagedPolicyName("AWSBackupServiceRolePolicyForS3Backup"),
+      iam.ManagedPolicy.fromAwsManagedPolicyName("AWSBackupServiceRolePolicyForS3Restore"),
+      iam.ManagedPolicy.fromAwsManagedPolicyName("AWSBackupFullAccess"),
+    ];
+
+    const backupRole = new iam.Role(this, "backupRole", {
+      assumedBy: new iam.ServicePrincipal("backup.amazonaws.com"),
+      roleName: "collectBackupAccess",
+      managedPolicies,
     });
+
+    const backupSelection = new backup.BackupSelection(
+      this,
+      "Selection",
+      {
+        backupPlan: plan,
+        resources: [backup.BackupResource.fromTag("backup", "yes")],
+        role: backupRole
+      }
+    )
 
     plan.addRule(
       new backup.BackupPlanRule({
