@@ -1,14 +1,16 @@
 import * as cdk from "aws-cdk-lib";
 import {
+  Stack,
   aws_codebuild,
   aws_codepipeline,
   aws_codepipeline_actions,
+  aws_events,
+  aws_events_targets,
   aws_iam,
-  aws_s3,
-  Stack
+  aws_lambda,
+  aws_s3
 } from "aws-cdk-lib";
 import { Construct } from "constructs";
-import commonConfig from "../util/common-config";
 import environmentConfig, {
   IEnvironmentConfig
 } from "../util/environment-config";
@@ -83,10 +85,10 @@ export class FrontendPipelineStack extends Stack {
     const sourceAction =
       new aws_codepipeline_actions.CodeStarConnectionsSourceAction({
         actionName: "GetSource",
-        owner: commonConfig.GitOwner,
+        owner: "bkdefault",
         repo: "collect-frontend",
         branch: stage,
-        connectionArn: commonConfig.GitConnectionArn,
+        connectionArn: "arn:aws:codestar-connections:us-west-2:756244784198:connection/f7205033-d3e2-42a6-b223-a703f3785807",
         output: sourceOutput,
         codeBuildCloneOutput: true
       });
@@ -135,9 +137,34 @@ export class FrontendPipelineStack extends Stack {
       actions: [deploy],
     });
 
-    pipeline.addStage({
-      stageName: "PostDeploy",
-      actions: [postDeploy],
-    });
+    // pipeline.addStage({
+    //   stageName: "PostDeploy",
+    //   actions: [postDeploy],
+    // });
+
+    const pipelineNotificationLambda = aws_lambda.Function.fromFunctionArn(
+      this,
+      "pipeNotificationLambda",
+      "arn:aws:lambda:us-east-1:756244784198:function:pipeline-notification"
+    )
+
+    const alertEventRule = new aws_events.Rule(
+      this,
+      "PipelineAlertRule",
+      {
+        eventPattern: {
+          detailType: ["CodePipeline Pipeline Execution State Change"],
+          detail: {
+            state: ["STARTED", "SUCCEEDED", "FAILED"],
+            pipeline: [pipeline.pipelineName],
+          },
+          source: ["aws.codepipeline"],
+        },
+      }
+    );
+
+    alertEventRule.addTarget(
+      new aws_events_targets.LambdaFunction(pipelineNotificationLambda, {})
+    );
   }
 }

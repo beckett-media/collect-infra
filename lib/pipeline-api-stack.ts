@@ -8,7 +8,6 @@ import {
   Stack
 } from "aws-cdk-lib";
 import { Construct } from "constructs";
-import commonConfig from "../util/common-config";
 import environmentConfig, {
   IEnvironmentConfig
 } from "../util/environment-config";
@@ -35,11 +34,11 @@ export class ApiPipelineStack extends Stack {
       {
         projectName: `collect-api-deploy-${stage}`,
         buildSpec: aws_codebuild.BuildSpec.fromSourceFilename(
-          "buildspec.yaml"
+          "buildspec.yml"
         ),
         environment: {
           computeType: aws_codebuild.ComputeType.LARGE,
-          buildImage: aws_codebuild.LinuxBuildImage.STANDARD_6_0,
+          buildImage: aws_codebuild.LinuxArmBuildImage.AMAZON_LINUX_2_STANDARD_3_0,
           privileged: true,
         },
         cache: aws_codebuild.Cache.bucket(new aws_s3.Bucket(this, "CacheBucket"))
@@ -83,10 +82,10 @@ export class ApiPipelineStack extends Stack {
     const sourceAction =
       new aws_codepipeline_actions.CodeStarConnectionsSourceAction({
         actionName: "GetSource",
-        owner: commonConfig.GitOwner,
+        owner: "bkdefault",
         repo: "collect-api",
         branch: stage,
-        connectionArn: commonConfig.GitConnectionArn,
+        connectionArn: "arn:aws:codestar-connections:us-west-2:756244784198:connection/f7205033-d3e2-42a6-b223-a703f3785807",
         output: sourceOutput,
         codeBuildCloneOutput: true,
       });
