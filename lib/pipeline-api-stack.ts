@@ -1,11 +1,14 @@
 import * as cdk from "aws-cdk-lib";
 import {
+  Stack,
   aws_codebuild,
   aws_codepipeline,
   aws_codepipeline_actions,
+  aws_events,
+  aws_events_targets,
   aws_iam,
-  aws_s3,
-  Stack
+  aws_lambda,
+  aws_s3
 } from "aws-cdk-lib";
 import { Construct } from "constructs";
 import environmentConfig, {
@@ -38,7 +41,7 @@ export class ApiPipelineStack extends Stack {
         ),
         environment: {
           computeType: aws_codebuild.ComputeType.LARGE,
-          buildImage: aws_codebuild.LinuxArmBuildImage.AMAZON_LINUX_2_STANDARD_3_0,
+          buildImage: aws_codebuild.LinuxArmBuildImage.AMAZON_LINUX_2_STANDARD_2_0,
           privileged: true,
         },
         cache: aws_codebuild.Cache.bucket(new aws_s3.Bucket(this, "CacheBucket"))
@@ -138,5 +141,30 @@ export class ApiPipelineStack extends Stack {
     //   stageName: "PostDeploy",
     //   actions: [postDeploy],
     // });
+
+    const pipelineNotificationLambda = aws_lambda.Function.fromFunctionArn(
+      this,
+      "pipeNotificationLambda",
+      "arn:aws:lambda:us-east-1:756244784198:function:pipeline-notification"
+    )
+
+    const alertEventRule = new aws_events.Rule(
+      this,
+      "PipelineAlertRule",
+      {
+        eventPattern: {
+          detailType: ["CodePipeline Pipeline Execution State Change"],
+          detail: {
+            state: ["STARTED", "SUCCEEDED", "FAILED"],
+            pipeline: [pipeline.pipelineName],
+          },
+          source: ["aws.codepipeline"],
+        },
+      }
+    );
+
+    alertEventRule.addTarget(
+      new aws_events_targets.LambdaFunction(pipelineNotificationLambda, {})
+    );
   }
 }
